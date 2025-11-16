@@ -202,7 +202,8 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+// Initialize the app
+async function initializeApp() {
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -225,12 +226,31 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5001', 10);
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
+  return server;
+}
+
+// For Vercel serverless deployment, export the app
+export default app;
+
+// For traditional Node.js deployment, start the server
+if (process.env.VERCEL !== '1') {
+  (async () => {
+    const server = await initializeApp();
+    
+    // ALWAYS serve the app on the port specified in the environment variable PORT
+    // Other ports are firewalled. Default to 5000 if not specified.
+    // this serves both the API and the client.
+    // It is the only port that is not firewalled.
+    const port = parseInt(process.env.PORT || '5001', 10);
+    server.listen(port, "0.0.0.0", () => {
+      log(`serving on port ${port}`);
+    });
+  })();
+} else {
+  // Initialize for Vercel
+  initializeApp().catch(err => {
+    logger.error('Failed to initialize app for Vercel', {
+      error: err instanceof Error ? err.message : String(err)
+    });
   });
-})();
+}
