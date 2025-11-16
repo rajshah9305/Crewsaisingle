@@ -48,81 +48,71 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
     <Card
       ref={provided?.innerRef}
       {...provided?.draggableProps}
-      className="group relative overflow-hidden border border-black-10 shadow-sm hover:shadow-lg transition-all duration-300 bg-white hover:border-black-20 touch-manipulation"
+      className="group relative overflow-hidden border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:border-orange/30 touch-manipulation"
       data-testid={`card-agent-${agent.id}`}
     >
-      
-      <CardHeader className="space-y-0 pb-3 sm:pb-4 px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6">
-        <div className="flex items-start justify-between gap-2 sm:gap-3">
-          <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+      <CardHeader className="space-y-0 pb-2 px-3 pt-2.5">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start gap-1.5 flex-1 min-w-0">
             <div
               {...provided?.dragHandleProps}
-              className="cursor-grab active:cursor-grabbing mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 sm:p-1.5 rounded hover:bg-black-5 touch-none hidden sm:block"
+              className="cursor-grab active:cursor-grabbing mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-0.5 rounded hover:bg-black-5 touch-none"
               data-testid={`button-drag-${agent.id}`}
             >
-              <GripVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black-40" />
+              <GripVertical className="h-3 w-3 text-black-40" />
             </div>
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-1.5 text-black tracking-tight line-clamp-2 sm:line-clamp-1" data-testid={`text-agent-name-${agent.id}`}>
+              <CardTitle className="text-xs font-bold mb-0.5 text-black tracking-tight line-clamp-1" data-testid={`text-agent-name-${agent.id}`}>
                 {agent.name}
               </CardTitle>
-              <CardDescription className="line-clamp-1 text-xs sm:text-sm font-medium text-black-60" data-testid={`text-agent-role-${agent.id}`}>
+              <CardDescription className="line-clamp-1 text-[10px] font-medium text-black-60" data-testid={`text-agent-role-${agent.id}`}>
                 {agent.role}
               </CardDescription>
             </div>
           </div>
-          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl bg-black-5 flex items-center justify-center flex-shrink-0 border border-black-10">
-            <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-black-40" />
+          <div className="h-7 w-7 rounded-md bg-gradient-to-br from-orange/10 to-orange/5 flex items-center justify-center flex-shrink-0 border border-orange/20">
+            <Bot className="h-3.5 w-3.5 text-orange" />
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="pb-3 sm:pb-4 space-y-3 sm:space-y-4 px-3 sm:px-4 md:px-6">
-        <div className="p-2.5 sm:p-3 rounded-md sm:rounded-lg bg-white-subtle border border-black-10">
-          <h4 className="text-[10px] sm:text-xs font-bold text-black uppercase tracking-wide mb-1.5 sm:mb-2">
-            Goal
-          </h4>
-          <p className="text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-2 text-black-80" data-testid={`text-agent-goal-${agent.id}`}>{agent.goal}</p>
+      <CardContent className="pb-2 space-y-1.5 px-3">
+        <div className="p-1.5 rounded-md bg-black-5 border border-black-10">
+          <p className="text-[10px] leading-tight line-clamp-2 text-black-80" data-testid={`text-agent-goal-${agent.id}`}>{agent.goal}</p>
         </div>
         
-        <div>
-          <h4 className="text-[10px] sm:text-xs font-bold text-black uppercase tracking-wide mb-2 sm:mb-2.5">
-            Tasks
-          </h4>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            {agent.tasks.slice(0, 3).map((task, idx) => (
-              <Badge key={idx} variant="secondary" className="text-[10px] sm:text-xs font-medium px-2 sm:px-2.5 py-0.5 sm:py-1 bg-black-5 border border-black-10 text-black hover:bg-black-10 transition-colors">
-                {task.length > (window.innerWidth < 640 ? 20 : 28) ? task.substring(0, window.innerWidth < 640 ? 20 : 28) + "..." : task}
-              </Badge>
-            ))}
-            {agent.tasks.length > 3 && (
-              <Badge variant="outline" className="text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 border border-black-20 text-black-60 hover:bg-black-5 transition-colors">
-                +{agent.tasks.length - 3} more
-              </Badge>
-            )}
-          </div>
+        <div className="flex flex-wrap gap-1">
+          {agent.tasks.slice(0, 2).map((task, idx) => (
+            <Badge key={idx} variant="secondary" className="text-[9px] font-medium px-1.5 py-0.5 bg-white-subtle border border-black-10 text-black-80">
+              {task.length > 20 ? task.substring(0, 20) + "..." : task}
+            </Badge>
+          ))}
+          {agent.tasks.length > 2 && (
+            <Badge variant="outline" className="text-[9px] font-bold px-1.5 py-0.5 border border-black-20 text-black-60">
+              +{agent.tasks.length - 2}
+            </Badge>
+          )}
         </div>
       </CardContent>
       
-      <CardFooter className="gap-1.5 sm:gap-2 pt-3 sm:pt-4 border-t border-black-10 bg-white px-3 sm:px-4 md:px-6 pb-3 sm:pb-4 md:pb-6">
+      <CardFooter className="gap-1 pt-2 border-t border-black-10 bg-white-subtle px-3 pb-2">
         <Button
           onClick={() => onExecute(agent)}
           size="sm"
-          className="flex-1 bg-orange hover:bg-orange-hover text-white font-semibold transition-all h-8 sm:h-9 text-xs sm:text-sm touch-manipulation active:scale-95"
+          className="flex-1 bg-orange hover:bg-orange-hover text-white font-semibold transition-all h-6 text-[10px] touch-manipulation active:scale-95 shadow-sm"
           data-testid={`button-execute-${agent.id}`}
         >
-          <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 fill-current" />
-          <span className="hidden xs:inline">Execute</span>
-          <span className="inline xs:hidden">Run</span>
+          <Play className="h-3 w-3 mr-1 fill-current" />
+          Execute
         </Button>
         <Button
           onClick={() => onEdit(agent)}
           variant="outline"
           size="sm"
-          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-8 sm:h-9 w-8 sm:w-9 p-0 touch-manipulation active:scale-95"
+          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-6 w-6 p-0 touch-manipulation active:scale-95"
           data-testid={`button-edit-${agent.id}`}
         >
-          <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Pencil className="h-3 w-3" />
           <span className="sr-only">Edit</span>
         </Button>
         <Button
@@ -130,10 +120,10 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           variant="outline"
           size="sm"
           disabled={deleteMutation.isPending}
-          className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-8 sm:h-9 w-8 sm:w-9 p-0 touch-manipulation active:scale-95"
+          className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-6 w-6 p-0 touch-manipulation active:scale-95"
           data-testid={`button-delete-${agent.id}`}
         >
-          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Trash2 className="h-3 w-3" />
           <span className="sr-only">Delete</span>
         </Button>
       </CardFooter>
