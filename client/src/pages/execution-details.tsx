@@ -67,29 +67,29 @@ export default function ExecutionDetailsPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-white overflow-hidden antialiased">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-white via-white-subtle to-white-secondary overflow-hidden antialiased">
       {/* Header */}
-      <header className="border-b border-black-10 bg-white z-50 flex-shrink-0">
-        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3">
-          <div className="flex items-center gap-2 sm:gap-3">
+      <header className="border-b border-black-10 bg-white/80 backdrop-blur-sm z-50 flex-shrink-0 shadow-sm">
+        <div className="w-full px-4 py-3">
+          <div className="flex items-center gap-3">
             <Link href="/executions">
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-black-5">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <img 
               src="/logo.png" 
               alt="RAJAI Platform Logo" 
-              className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 object-contain flex-shrink-0"
+              className="h-10 w-10 object-contain flex-shrink-0"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
             <div className="min-w-0 flex-1">
-              <h1 className="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-black tracking-tight truncate">
+              <h1 className="font-display text-xl font-bold text-black tracking-tight truncate">
                 Execution Details
               </h1>
-              <p className="font-sans text-[10px] sm:text-xs text-black-60 font-medium mt-0.5 sm:mt-1 truncate hidden xs:block">
+              <p className="font-sans text-xs text-black-60 font-medium mt-0.5 truncate hidden xs:block">
                   {execution?.agentName || "View execution results"}
                 </p>
             </div>
@@ -98,13 +98,13 @@ export default function ExecutionDetailsPage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto overscroll-contain bg-white-secondary">
-        <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5">
+      <div className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="px-4 py-4">
           {error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="text-orange mb-4">
-                <p className="font-semibold text-lg">Failed to load execution</p>
-                <p className="text-sm text-black-60 mt-2">
+              <div className="mb-4">
+                <p className="font-display font-semibold text-lg text-black mb-2">Failed to load execution</p>
+                <p className="font-sans text-sm text-black-60">
                   {error instanceof Error ? error.message : "An unexpected error occurred"}
                 </p>
               </div>
@@ -114,27 +114,27 @@ export default function ExecutionDetailsPage() {
             </div>
           ) : isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-center space-y-2 sm:space-y-3">
-                <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-orange mx-auto" />
-                <p className="text-xs sm:text-sm font-medium text-black-60">Loading execution details...</p>
+              <div className="text-center space-y-3">
+                <Loader2 className="h-8 w-8 animate-spin text-orange mx-auto" />
+                <p className="text-sm font-medium text-black-60">Loading execution details...</p>
               </div>
             </div>
           ) : !execution ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <h3 className="font-display text-base sm:text-lg font-bold text-black mb-2">Execution not found</h3>
-              <p className="font-sans text-xs sm:text-sm text-black-60 mb-4">
+              <h3 className="font-display text-base font-bold text-black mb-2">Execution not found</h3>
+              <p className="font-sans text-sm text-black-60 mb-4">
                 The execution you're looking for doesn't exist or has been deleted.
               </p>
               <Link href="/executions">
-                <Button variant="outline">Back to Executions</Button>
+                <Button variant="outline" className="border-black-20 hover:bg-black-5">Back to Executions</Button>
               </Link>
             </div>
           ) : (
             <Card className="border border-black-10 shadow-sm bg-white">
-              <CardHeader className="pb-3 px-3 sm:px-4 md:px-5 pt-3 sm:pt-4 md:pt-5">
+              <CardHeader className="pb-3 px-4 pt-4">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-black">
+                    <CardTitle className="text-base font-bold text-black">
                       {execution.agentName}
                     </CardTitle>
                     <StatusBadge status={execution.status as "running" | "completed" | "failed"} />
@@ -153,18 +153,18 @@ export default function ExecutionDetailsPage() {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4 px-3 sm:px-4 md:px-5 pb-3 sm:pb-4 md:pb-5">
+              <CardContent className="space-y-4 px-4 pb-4">
                 <div>
                   <h4 className="font-sans text-sm font-semibold text-black mb-2">Created At</h4>
-                  <p className="font-sans text-xs sm:text-sm text-black-60">
+                  <p className="font-sans text-sm text-black-60">
                     {format(new Date(execution.createdAt), "PPP p")}
                   </p>
                 </div>
                 {execution.result && (
                   <div>
                     <h4 className="font-sans text-sm font-semibold text-black mb-2">Result</h4>
-                    <div className="bg-black-5 rounded-md sm:rounded-lg p-2.5 sm:p-3 md:p-4 border border-black-10">
-                      <pre className="font-mono text-[10px] sm:text-xs md:text-sm whitespace-pre-wrap break-words text-black-80 overflow-x-auto leading-relaxed">
+                    <div className="bg-black-5 rounded-lg p-3 border border-black-10">
+                      <pre className="font-mono text-xs whitespace-pre-wrap break-words text-black-80 overflow-x-auto leading-relaxed">
                         {execution.result}
                       </pre>
                     </div>
@@ -173,7 +173,7 @@ export default function ExecutionDetailsPage() {
                 {!execution.result && execution.status === "running" && (
                   <div className="flex items-center gap-2 text-black-60">
                     <Loader2 className="h-4 w-4 animate-spin text-orange" />
-                    <p className="font-sans text-xs sm:text-sm">Execution in progress...</p>
+                    <p className="font-sans text-sm">Execution in progress...</p>
                   </div>
                 )}
               </CardContent>
