@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard";
 import AgentsPage from "@/pages/agents";
 import ExecutionsPage from "@/pages/executions";
 import ExecutionDetailsPage from "@/pages/execution-details";
+import TemplatesPage from "@/pages/templates";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/agents" component={AgentsPage} />
       <Route path="/executions" component={ExecutionsPage} />
       <Route path="/executions/:id" component={ExecutionDetailsPage} />
+      <Route path="/templates" component={TemplatesPage} />
       <Route component={NotFound} />
     </Switch>
   );

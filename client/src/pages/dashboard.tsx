@@ -179,15 +179,26 @@ export default function Dashboard() {
                 <Plus className="h-4 w-4 mr-2" />
                 New Agent
               </Button>
+              <Link href="/templates">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-black-20 hover:bg-black-5 text-sm h-9 px-3"
+                  title="Browse Templates"
+                >
+                  <Sparkles className="h-4 w-4 mr-1.5" />
+                  Templates
+                </Button>
+              </Link>
               <Button 
                 onClick={() => setTemplateDialogOpen(true)}
                 variant="outline"
                 size="sm"
                 className="border-black-20 hover:bg-black-5 text-sm h-9 px-3"
-                title="Use Template"
+                title="Quick Template"
               >
                 <Sparkles className="h-4 w-4 mr-1.5" />
-                Templates
+                Quick Template
               </Button>
             </div>
           </div>
