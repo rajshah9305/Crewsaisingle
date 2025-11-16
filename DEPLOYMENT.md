@@ -27,7 +27,7 @@ git add .
 git commit -m "Initial commit: RAJAI Platform"
 
 # Add remote (replace with your repo URL)
-git remote add origin https://github.com/yourusername/rajai-platform.git
+git remote add origin https://github.com/rajshah9305/Crewsaisingle.git
 
 # Push to GitHub
 git push -u origin main

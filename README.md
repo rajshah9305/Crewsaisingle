@@ -1,6 +1,6 @@
 # 🤖 RAJAI Platform - Multi-Agent Orchestration System
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/rajai-platform)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rajshah9305/Crewsaisingle)
 
 > A modern, production-ready AI agent orchestration platform powered by Google's Gemini API. Create, manage, and execute intelligent agents with defined roles and tasks through an intuitive, visually stunning interface.
 
@@ -18,8 +18,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/rajai-platform.git
-cd rajai-platform
+git clone https://github.com/rajshah9305/Crewsaisingle.git
+cd Crewsaisingle
 
 # 2. Install dependencies
 npm install
