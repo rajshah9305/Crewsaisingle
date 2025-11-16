@@ -4,8 +4,6 @@ import { Agent, Execution } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { AgentCard } from "@/components/agent-card";
 import { AgentDialog } from "@/components/agent-dialog";
-import { TemplateSelector } from "@/components/template-selector";
-import type { AgentTemplate } from "@/lib/agent-templates";
 import { EmptyState } from "@/components/empty-state";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Plus, Bot, Loader2, CheckCircle2, XCircle, ArrowRight, Sparkles } from "lucide-react";
@@ -19,7 +17,6 @@ import { Link } from "wouter";
 
 export default function Dashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | undefined>();
   const { toast } = useToast();
 
@@ -99,14 +96,6 @@ export default function Dashboard() {
     setDialogOpen(true);
   };
 
-  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | undefined>();
-
-  const handleTemplateSelect = (template: AgentTemplate) => {
-    setTemplateDialogOpen(false);
-    setSelectedTemplate(template);
-    setEditingAgent(undefined);
-    setDialogOpen(true);
-  };
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -190,16 +179,6 @@ export default function Dashboard() {
                   Templates
                 </Button>
               </Link>
-              <Button 
-                onClick={() => setTemplateDialogOpen(true)}
-                variant="outline"
-                size="sm"
-                className="border-black-20 hover:bg-black-5 text-sm h-9 px-3"
-                title="Quick Template"
-              >
-                <Sparkles className="h-4 w-4 mr-1.5" />
-                Quick Template
-              </Button>
             </div>
           </div>
         </div>
@@ -370,22 +349,15 @@ export default function Dashboard() {
       </div>
 
       <AgentDialog
-        key={editingAgent?.id || selectedTemplate?.id || "new"}
+        key={editingAgent?.id || "new"}
         open={dialogOpen}
         onOpenChange={(open) => {
           setDialogOpen(open);
           if (!open) {
             setEditingAgent(undefined);
-            setSelectedTemplate(undefined);
           }
         }}
         agent={editingAgent}
-        template={selectedTemplate}
-      />
-      <TemplateSelector
-        open={templateDialogOpen}
-        onOpenChange={setTemplateDialogOpen}
-        onSelectTemplate={handleTemplateSelect}
       />
     </div>
   );

@@ -126,12 +126,12 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-agent">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto border border-black-10 shadow-lg bg-white" data-testid="dialog-agent">
+        <DialogHeader className="border-b border-black-10 pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle>{agent ? "Edit Agent" : "Create New Agent"}</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="font-display text-xl font-bold text-black">{agent ? "Edit Agent" : "Create New Agent"}</DialogTitle>
+              <DialogDescription className="font-sans text-sm text-black-60 mt-1">
                 {agent 
                   ? "Update the agent's configuration and tasks."
                   : "Configure your AI agent with a role, goal, and specific tasks to execute."}
@@ -143,7 +143,7 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
                 variant="outline"
                 size="sm"
                 onClick={() => setTemplateSelectorOpen(true)}
-                className="gap-2"
+                className="gap-2 border-black-20 hover:bg-black-5 text-sm h-9 px-3"
               >
                 <Sparkles className="h-4 w-4" />
                 Templates
@@ -153,21 +153,22 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Agent Name</FormLabel>
+                  <FormLabel className="font-sans text-sm font-semibold text-black">Agent Name</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="e.g., Content Writer, Research Analyst" 
+                      className="border-black-10 focus:border-orange focus:ring-orange"
                       {...field}
                       data-testid="input-agent-name"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-orange" />
                 </FormItem>
               )}
             />
@@ -177,15 +178,16 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel className="font-sans text-sm font-semibold text-black">Role</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="e.g., Senior Content Strategist" 
+                      className="border-black-10 focus:border-orange focus:ring-orange"
                       {...field}
                       data-testid="input-agent-role"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-orange" />
                 </FormItem>
               )}
             />
@@ -195,17 +197,17 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
               name="goal"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Goal</FormLabel>
+                  <FormLabel className="font-sans text-sm font-semibold text-black">Goal</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="What is this agent trying to achieve?"
-                      className="resize-none"
+                      className="resize-none border-black-10 focus:border-orange focus:ring-orange"
                       rows={3}
                       {...field}
                       data-testid="input-agent-goal"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-orange" />
                 </FormItem>
               )}
             />
@@ -215,30 +217,31 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
               name="backstory"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Backstory</FormLabel>
+                  <FormLabel className="font-sans text-sm font-semibold text-black">Backstory</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Provide context about this agent's expertise and background"
-                      className="resize-none"
+                      className="resize-none border-black-10 focus:border-orange focus:ring-orange"
                       rows={3}
                       {...field}
                       data-testid="input-agent-backstory"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-orange" />
                 </FormItem>
               )}
             />
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label>Tasks</Label>
+                <Label className="font-sans text-sm font-semibold text-black">Tasks</Label>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => append("")}
                   data-testid="button-add-task"
+                  className="border-black-20 hover:bg-black-5 text-sm h-8 px-3"
                 >
                   <Plus className="h-4 w-4 mr-1.5" />
                   Add Task
@@ -260,7 +263,7 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
                               {...field}
                               value={typeof field.value === 'string' ? field.value : ''}
                               data-testid={`input-task-${index}`}
-                              className="font-mono text-sm"
+                              className="font-mono text-sm border-black-10 focus:border-orange focus:ring-orange"
                             />
                           </FormControl>
                           {fields.length > 1 && (
@@ -270,12 +273,13 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
                               size="icon"
                               onClick={() => remove(index)}
                               data-testid={`button-remove-task-${index}`}
+                              className="border-black-20 hover:bg-orange/10 hover:border-orange hover:text-orange h-9 w-9"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}
                         </div>
-                        <FormMessage />
+                        <FormMessage className="text-xs text-orange" />
                       </FormItem>
                     )}
                   />
@@ -283,12 +287,13 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="border-t border-black-10 pt-4 mt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 data-testid="button-cancel"
+                className="border-black-20 hover:bg-black-5 text-sm h-9 px-4"
               >
                 Cancel
               </Button>
@@ -296,6 +301,7 @@ export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialog
                 type="submit" 
                 disabled={mutation.isPending}
                 data-testid="button-submit"
+                className="bg-orange hover:bg-orange-hover text-white font-semibold text-sm h-9 px-4 shadow-sm hover:shadow-md transition-all"
               >
                 {mutation.isPending ? "Saving..." : agent ? "Update Agent" : "Create Agent"}
               </Button>
