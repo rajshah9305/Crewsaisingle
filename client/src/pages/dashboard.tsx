@@ -2,30 +2,29 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import type { Agent, Execution } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { AgentCard } from "@/components/agent-card";
 import { AgentDialog } from "@/components/agent-dialog";
-import { EmptyState } from "@/components/empty-state";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  type DropResult,
-} from "@hello-pangea/dnd";
 import {
   Plus,
-  Bot,
   Loader2,
   CheckCircle2,
   XCircle,
-  Sparkles,
   Users,
   Zap,
   TrendingUp,
   Activity,
+  Play,
+  Edit,
+  Trash2,
+  Search,
+  Clock,
+  FileText,
+  LayoutDashboard,
+  Settings,
+  History,
+  GripVertical,
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardContent,
@@ -34,8 +33,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatDistanceToNow, isToday } from "date-fns";
-import { Link } from "wouter";
 
 interface StatCardProps {
   title: string;
@@ -44,37 +45,213 @@ interface StatCardProps {
   trend?: string;
 }
 
-function StatCard({ title, value, icon, trend }: StatCardProps) {
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, trend }) => {
   return (
-    <Card className="border-orange/10 hover:shadow-lg hover:border-orange/40 transition-all duration-300 bg-white">
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1.5">
-            <p className="text-[11px] font-semibold text-black-60 uppercase tracking-wide">
+    <Card className="border-orange-100 hover:shadow-lg hover:border-orange-300 transition-all duration-300 bg-white">
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               {title}
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-black">
-              {value}
-            </p>
+            <p className="text-3xl font-extrabold text-foreground">{value}</p>
             {trend && (
-              <p className="text-[11px] text-black-50 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-orange" />
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-orange-500" />
                 {trend}
               </p>
             )}
           </div>
-          <div className="p-3 sm:p-3.5 bg-gradient-to-br from-orange/5 to-orange/10 rounded-xl border border-orange/20 shadow-sm flex items-center justify-center">
+          <div className="p-3 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-sm flex items-center justify-center">
             {icon}
           </div>
         </div>
       </CardContent>
     </Card>
   );
+};
+
+interface DashboardAgentCardProps {
+  agent: Agent;
+  onEdit: (agent: Agent) => void;
+  onExecute: (agent: Agent) => void;
 }
+
+const DashboardAgentCard: React.FC<DashboardAgentCardProps> = ({
+  agent,
+  onEdit,
+  onExecute,
+}) => {
+  return (
+    <Card className="border-orange-100 hover:shadow-xl hover:border-orange-300 transition-all duration-300 group bg-white">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3 flex-1">
+            <div className="cursor-grab mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <GripVertical className="w-4 h-4 text-orange-400" />
+            </div>
+            <div className="flex-1">
+              <CardTitle className="text-lg font-bold text-foreground mb-1">
+                {agent.name}
+              </CardTitle>
+              <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                {agent.goal}
+              </CardDescription>
+            </div>
+          </div>
+          <Badge className="bg-orange-500 hover:bg-orange-600 text-white">
+            Active
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={() => onExecute(agent)}
+            className="bg-orange-500 hover:bg-orange-600 text-white flex-1 shadow-md hover:shadow-lg transition-all"
+          >
+            <Play className="w-4 h-4 mr-1" />
+            Execute
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onEdit(agent)}
+            className="border-orange-300 hover:bg-orange-50"
+          >
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-orange-300 hover:bg-orange-50 hover:text-red-600"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface ExecutionCardProps {
+  execution: Execution;
+}
+
+const ExecutionCard: React.FC<ExecutionCardProps> = ({ execution }) => {
+  const getStatusConfig = (status: Execution["status"]) => {
+    switch (status) {
+      case "running":
+        return {
+          icon: <Activity className="w-4 h-4" />,
+          className: "bg-blue-50 text-blue-700 border-blue-200",
+          label: "Running",
+        };
+      case "completed":
+        return {
+          icon: <CheckCircle2 className="w-4 h-4" />,
+          className: "bg-green-50 text-green-700 border-green-200",
+          label: "Completed",
+        };
+      case "failed":
+        return {
+          icon: <XCircle className="w-4 h-4" />,
+          className: "bg-red-50 text-red-700 border-red-200",
+          label: "Failed",
+        };
+      default:
+        return {
+          icon: <Activity className="w-4 h-4" />,
+          className: "bg-gray-50 text-gray-700 border-gray-200",
+          label: status,
+        };
+    }
+  };
+
+  const statusConfig = getStatusConfig(execution.status);
+
+  return (
+    <Card className="border-orange-100 hover:shadow-lg hover:border-orange-300 transition-all duration-300 bg-white">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <h4 className="font-bold text-foreground mb-1">
+              {execution.agentName}
+            </h4>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="w-3 h-3 text-orange-500" />
+              {formatDistanceToNow(new Date(execution.createdAt), {
+                addSuffix: true,
+              })}
+            </p>
+          </div>
+          <Badge
+            variant="outline"
+            className={`${statusConfig.className} flex items-center gap-1 font-medium`}
+          >
+            {statusConfig.icon}
+            {statusConfig.label}
+          </Badge>
+        </div>
+        {execution.result && (
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+            {execution.result.length > 150
+              ? `${execution.result.substring(0, 150)}...`
+              : execution.result}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+}
+
+interface TemplateCardProps {
+  template: Template;
+}
+
+const TemplateCard: React.FC<TemplateCardProps> = ({ template }) => {
+  return (
+    <Card className="border-orange-100 hover:shadow-xl hover:border-orange-300 transition-all duration-300 bg-white">
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-3 mb-2">
+          <div className="p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-sm">
+            <FileText className="w-5 h-5 text-orange-500" />
+          </div>
+          <div className="flex-1">
+            <CardTitle className="text-base font-bold text-foreground mb-1">
+              {template.name}
+            </CardTitle>
+            <Badge className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+              {template.category}
+            </Badge>
+          </div>
+        </div>
+        <CardDescription className="text-sm text-muted-foreground">
+          {template.description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all">
+          Use Template
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function Dashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
 
   const {
@@ -109,26 +286,6 @@ export default function Dashboard() {
   });
 
   const executions = Array.isArray(executionsData) ? executionsData : [];
-
-  const reorderMutation = useMutation({
-    mutationFn: async (newOrder: Agent[]) => {
-      return await apiRequest("PATCH", "/api/agents/reorder", {
-        agents: newOrder,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/agents"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Reorder failed",
-        description:
-          error?.message ||
-          "Failed to reorder agents. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const executeMutation = useMutation({
     mutationFn: async (agentId: string) => {
@@ -167,22 +324,6 @@ export default function Dashboard() {
     setDialogOpen(true);
   };
 
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
-    const items = Array.from(agents);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const reordered = items.map((agent, index) => ({
-      ...agent,
-      order: index,
-    }));
-
-    queryClient.setQueryData(["/api/agents"], reordered);
-    reorderMutation.mutate(reordered);
-  };
-
   const runningCount = executions.filter(
     (e) => e.status === "running",
   ).length;
@@ -204,257 +345,504 @@ export default function Dashboard() {
       : "—";
   const latestExecution = executions[0];
 
+  const statCards: StatCardProps[] = [
+    {
+      title: "Total Agents",
+      value: agents.length,
+      icon: <Users className="w-5 h-5 text-orange-500" />,
+      trend: agents.length > 0 ? "Active in workspace" : "No agents yet",
+    },
+    {
+      title: "Active Executions",
+      value: runningCount,
+      icon: <Activity className="w-5 h-5 text-orange-500" />,
+      trend: runningCount > 0 ? "Running now" : "Idle",
+    },
+    {
+      title: "Completed Today",
+      value: completedTodayCount,
+      icon: <CheckCircle2 className="w-5 h-5 text-orange-500" />,
+      trend: "Today’s successful runs",
+    },
+    {
+      title: "Success Rate",
+      value: successRate,
+      icon: <Zap className="w-5 h-5 text-orange-500" />,
+      trend: "Completed vs failed",
+    },
+  ];
+
+  const templates: Template[] = [
+    {
+      id: "1",
+      name: "Data Pipeline",
+      description: "Complete data ingestion and processing pipeline",
+      category: "Data Processing",
+    },
+    {
+      id: "2",
+      name: "Notification System",
+      description: "Multi-channel notification orchestration",
+      category: "Communication",
+    },
+    {
+      id: "3",
+      name: "Analytics Dashboard",
+      description: "Real-time analytics and reporting agent",
+      category: "Analytics",
+    },
+  ];
+
+  const filteredAgents = agents.filter((agent) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      agent.name.toLowerCase().includes(q) ||
+      agent.goal.toLowerCase().includes(q) ||
+      agent.backstory.toLowerCase().includes(q)
+    );
+  });
+
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-white via-white-subtle to-white-secondary overflow-hidden antialiased">
-      {/* Header */}
-      <header className="border-b border-black-10 bg-white/80 backdrop-blur-sm z-50 flex-shrink-0 shadow-sm">
-        <div className="w-full max-w-6xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <img
-                src="/logo.png"
-                alt="RAJAI Platform Logo"
-                className="h-10 w-10 object-contain flex-shrink-0"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-              <div className="min-w-0 flex-1">
-                <h1
-                  className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight truncate"
-                  data-testid="text-app-title"
-                >
-                  <span className="gradient-text">RAJ&nbsp;AI</span>
-                  <span className="ml-2 hidden sm:inline text-black/70 font-semibold text-base sm:text-lg align-middle">
-                    multi-agent orchestration
-                  </span>
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/agents">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm border-black-20 hover:bg-black-5"
-                >
-                  Agents
-                </Button>
-              </Link>
-              <Link href="/executions">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-sm border-black-20 hover:bg-black-5"
-                >
-                  Executions
-                </Button>
-              </Link>
-              <Button
-                onClick={handleCreateNew}
-                data-testid="button-create-agent"
-                size="sm"
-                className="bg-orange hover:bg-orange-hover text-white font-semibold text-sm h-9 px-4 shadow-sm hover:shadow-md transition-all"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Agent
-              </Button>
-              <Link href="/templates">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-black-20 hover:bg-black-5 text-sm h-9 px-3"
-                  title="Browse Templates"
-                >
-                  <Sparkles className="h-4 w-4 mr-1.5" />
-                  Templates
-                </Button>
-              </Link>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-white via-orange-50/30 to-white antialiased">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        {/* Header */}
+        <header className="mb-8">
+          <div className="text-center mb-6">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-2 bg-gradient-to-r from-gray-900 via-orange-600 to-gray-900 bg-clip-text text-transparent tracking-tight">
+              RAJ AI
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground font-medium tracking-wide">
+              multi-agent orchestration platform
+            </p>
           </div>
-        </div>
-      </header>
 
-      {/* Stats Bar */}
-      <section className="flex-shrink-0 border-b border-black-10 bg-white-subtle/60">
-        <div className="w-full max-w-6xl mx-auto px-4 py-3 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3">
-          <StatCard
-            title="Total Agents"
-            value={agents.length}
-            icon={<Users className="w-5 h-5 text-orange" />}
-            trend={agents.length > 0 ? "Active in workspace" : "No agents yet"}
-          />
-          <StatCard
-            title="Active Executions"
-            value={runningCount}
-            icon={<Activity className="w-5 h-5 text-orange" />}
-            trend={runningCount > 0 ? "Running now" : "Idle"}
-          />
-          <StatCard
-            title="Completed Today"
-            value={completedTodayCount}
-            icon={<CheckCircle2 className="w-5 h-5 text-orange" />}
-            trend="Today’s successful runs"
-          />
-          <StatCard
-            title="Success Rate"
-            value={successRate}
-            icon={<Zap className="w-5 h-5 text-orange" />}
-            trend="Completed vs failed"
-          />
-        </div>
-      </section>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+            <div className="relative w-full sm:w-96">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search agents, executions, templates..."
+                className="pl-10 border-orange-200 focus-visible:ring-orange-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button
+              onClick={handleCreateNew}
+              data-testid="button-create-agent"
+              className="bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Agent
+            </Button>
+          </div>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-hidden">
-        <div className="w-full max-w-6xl mx-auto h-full grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
-          {/* Agents Pane */}
-          <section className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm card-hover">
-            <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle">
-              <h2 className="font-display text-base font-bold text-black">
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {statCards.map((stat) => (
+              <StatCard key={stat.title} {...stat} />
+            ))}
+          </div>
+        </header>
+
+        <Separator className="my-6 bg-orange-100" />
+
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex items-center justify-center mb-6">
+            <TabsList className="bg-white border border-orange-100 shadow-sm">
+              <TabsTrigger
+                value="overview"
+                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white gap-2"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="agents"
+                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white gap-2"
+              >
+                <Users className="w-4 h-4" />
                 Agents
-              </h2>
-            </div>
-            <div className="flex-1 overflow-y-auto overscroll-contain p-3">
-              {agentsLoading ? (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="rounded-lg border border-black-10 overflow-hidden"
-                    >
-                      <div className="p-3 space-y-2">
-                        <Skeleton className="h-4 w-3/4" />
-                        <Skeleton className="h-3 w-1/2" />
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-7 w-full" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : agents.length === 0 ? (
-                <EmptyState onCreateAgent={handleCreateNew} />
-              ) : (
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId="agents">
-                    {(provided) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className="grid grid-cols-1 xl:grid-cols-2 gap-2"
-                      >
-                        {agents.map((agent, index) => (
-                          <Draggable
-                            key={agent.id}
-                            draggableId={agent.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <AgentCard
-                                agent={agent}
-                                onEdit={handleEdit}
-                                onExecute={handleExecute}
-                                provided={provided}
-                              />
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              )}
-            </div>
-          </section>
+              </TabsTrigger>
+              <TabsTrigger
+                value="executions"
+                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white gap-2"
+              >
+                <History className="w-4 h-4" />
+                Executions
+              </TabsTrigger>
+              <TabsTrigger
+                value="templates"
+                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Templates
+              </TabsTrigger>
+              <TabsTrigger
+                value="settings"
+                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          {/* Latest Execution Pane */}
-          <section className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm card-hover">
-            <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle">
-              <h2 className="font-display text-base font-bold text-black">
-                Latest Execution
-              </h2>
-            </div>
-            <div className="flex-1 overflow-y-auto overscroll-contain p-3">
-              {executionsLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <Loader2 className="h-6 w-6 animate-spin text-orange" />
-                </div>
-              ) : !latestExecution ? (
-                <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                  <div className="h-16 w-16 rounded-xl bg-black-5 flex items-center justify-center border border-black-10 mb-4">
-                    <Bot className="h-8 w-8 text-black-40" />
-                  </div>
-                  <h3 className="font-display text-base font-bold text-black mb-2">
-                    No Executions
-                  </h3>
-                  <p className="font-sans text-sm text-black-60">
-                    Execute an agent to see results
-                  </p>
-                </div>
-              ) : (
-                <Card
-                  data-testid={`execution-${latestExecution.id}`}
-                  className="border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white"
-                >
-                  <CardHeader className="pb-3 px-4 pt-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <CardTitle
-                            className="text-base font-bold text-black truncate"
-                            data-testid={`text-execution-agent-${latestExecution.id}`}
-                          >
-                            {latestExecution.agentName}
-                          </CardTitle>
-                          {latestExecution.status === "running" && (
-                            <Badge className="gap-1.5 bg-orange/10 border-orange text-orange text-xs py-1 px-2">
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              <span className="font-semibold">Running</span>
-                            </Badge>
-                          )}
-                          {latestExecution.status === "completed" && (
-                            <Badge className="gap-1.5 bg-black-5 border-black-20 text-black text-xs py-1 px-2">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              <span className="font-semibold">Completed</span>
-                            </Badge>
-                          )}
-                          {latestExecution.status === "failed" && (
-                            <Badge className="gap-1.5 bg-black-5 border-orange text-orange text-xs py-1 px-2">
-                              <XCircle className="h-3.5 w-3.5" />
-                              <span className="font-semibold">Failed</span>
-                            </Badge>
-                          )}
-                        </div>
-                        <CardDescription className="text-sm font-medium text-black-60">
-                          {formatDistanceToNow(
-                            new Date(latestExecution.createdAt),
-                            { addSuffix: true },
-                          )}
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <Card className="border-orange-100 shadow-md bg-white">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-xl font-bold">
+                          Recent Activity
+                        </CardTitle>
+                        <CardDescription>
+                          Latest executions and agent updates
                         </CardDescription>
                       </div>
+                      <Badge className="bg-orange-500 text-white flex items-center gap-1">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Live
+                      </Badge>
                     </div>
                   </CardHeader>
-                  {latestExecution.result && (
-                    <CardContent className="pt-0 px-4 pb-4">
-                      <div className="bg-black-5 rounded-lg p-3 border border-black-10 max-h-[calc(100vh-320px)] overflow-y-auto">
-                        <pre
-                          className="font-mono text-xs whitespace-pre-wrap break-words text-black-80 leading-relaxed"
-                          data-testid={`text-execution-result-${latestExecution.id}`}
-                        >
-                          {latestExecution.result.length > 800
-                            ? `${latestExecution.result.substring(0, 800)}...`
-                            : latestExecution.result}
-                        </pre>
-                      </div>
-                    </CardContent>
-                  )}
+                  <CardContent className="space-y-3">
+                    {executionsLoading && (
+                      <p className="text-sm text-muted-foreground">
+                        Loading executions...
+                      </p>
+                    )}
+                    {!executionsLoading && executions.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        No executions yet. Run an agent to see activity here.
+                      </p>
+                    )}
+                    {!executionsLoading &&
+                      executions.slice(0, 3).map((execution) => (
+                        <ExecutionCard key={execution.id} execution={execution} />
+                      ))}
+                  </CardContent>
                 </Card>
-              )}
+
+                <Card className="border-orange-100 shadow-md bg-white">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-bold">
+                      Top Performing Agents
+                    </CardTitle>
+                    <CardDescription>
+                      Most recently active agents in your workspace
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {agentsLoading && (
+                      <p className="text-sm text-muted-foreground">
+                        Loading agents...
+                      </p>
+                    )}
+                    {!agentsLoading && agents.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        No agents yet. Create your first agent to get started.
+                      </p>
+                    )}
+                    <div className="grid grid-cols-1 gap-4">
+                      {!agentsLoading &&
+                        agents
+                          .slice(0, 2)
+                          .map((agent) => (
+                            <DashboardAgentCard
+                              key={agent.id}
+                              agent={agent}
+                              onEdit={handleEdit}
+                              onExecute={handleExecute}
+                            />
+                          ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="space-y-6">
+                <Card className="border-orange-100 shadow-md bg-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-bold flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-orange-500" />
+                      Quick Actions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
+                      size="sm"
+                      onClick={handleCreateNew}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create New Agent
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
+                      size="sm"
+                      onClick={() => setActiveTab("templates")}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Browse Templates
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
+                      size="sm"
+                      onClick={() => setActiveTab("executions")}
+                    >
+                      <Activity className="w-4 h-4 mr-2" />
+                      View All Executions
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-orange-500" />
+                      System Status
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      All systems operational
+                    </p>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">
+                          API Response
+                        </span>
+                        <Badge className="bg-green-50 text-green-700 border-green-200">
+                          98ms
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Uptime</span>
+                        <Badge className="bg-green-50 text-green-700 border-green-200">
+                          99.9%
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">
+                          Active Agents
+                        </span>
+                        <Badge className="bg-orange-50 text-orange-700 border-orange-200">
+                          {agents.length}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </section>
-        </div>
-      </main>
+          </TabsContent>
+
+          {/* Agents Tab */}
+          <TabsContent value="agents" className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Agent Management
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Create, configure, and manage your AI agents
+                </p>
+              </div>
+              <Button
+                onClick={handleCreateNew}
+                className="bg-orange-500 hover:bg-orange-600 text-white shadow-md"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Agent
+              </Button>
+            </div>
+
+            {agentsLoading && (
+              <p className="text-sm text-muted-foreground">Loading agents...</p>
+            )}
+            {!agentsLoading && agents.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No agents yet. Click &quot;New Agent&quot; to create your first
+                one.
+              </p>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {!agentsLoading &&
+                filteredAgents.map((agent) => (
+                  <DashboardAgentCard
+                    key={agent.id}
+                    agent={agent}
+                    onEdit={handleEdit}
+                    onExecute={handleExecute}
+                  />
+                ))}
+            </div>
+          </TabsContent>
+
+          {/* Executions Tab */}
+          <TabsContent value="executions" className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Execution History
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Monitor and analyze agent execution logs
+                </p>
+              </div>
+            </div>
+
+            {executionsLoading && (
+              <p className="text-sm text-muted-foreground">
+                Loading executions...
+              </p>
+            )}
+            {!executionsLoading && executions.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No executions yet. Execute an agent to see history here.
+              </p>
+            )}
+
+            <div className="space-y-4">
+              {!executionsLoading &&
+                executions.map((execution) => (
+                  <ExecutionCard key={execution.id} execution={execution} />
+                ))}
+            </div>
+          </TabsContent>
+
+          {/* Templates Tab */}
+          <TabsContent value="templates" className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Agent Templates
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Pre-configured templates to get started quickly
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates.map((template) => (
+                <TemplateCard key={template.id} template={template} />
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-foreground">
+                Platform Settings
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Configure your RAJ AI workspace
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="border-orange-100 shadow-md bg-white">
+                <CardHeader>
+                  <CardTitle>General Settings</CardTitle>
+                  <CardDescription>
+                    Manage workspace preferences
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      Workspace Name
+                    </label>
+                    <Input
+                      placeholder="RAJ AI Workspace"
+                      className="border-orange-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      Default Agent Timeout
+                    </label>
+                    <Input
+                      placeholder="300 seconds"
+                      className="border-orange-200"
+                    />
+                  </div>
+                  <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+                    Save Changes
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="border-orange-100 shadow-md bg-white">
+                <CardHeader>
+                  <CardTitle>Notification Preferences</CardTitle>
+                  <CardDescription>
+                    Control alerts and notifications
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      Email Notifications
+                    </span>
+                    <Badge className="bg-green-500 text-white">Enabled</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      Execution Alerts
+                    </span>
+                    <Badge className="bg-green-500 text-white">Enabled</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      System Updates
+                    </span>
+                    <Badge variant="secondary">Disabled</Badge>
+                  </div>
+                  <Button className="w-full border-orange-300 hover:bg-orange-50" variant="outline">
+                    Configure
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <footer className="mt-16 pt-8 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <p>© 2025 RAJ AI. All rights reserved.</p>
+            <div className="flex items-center gap-4">
+              <a
+                href="#"
+                className="hover:text-orange-500 transition-colors"
+              >
+                Documentation
+              </a>
+              <a
+                href="#"
+                className="hover:text-orange-500 transition-colors"
+              >
+                Support
+              </a>
+              <a
+                href="#"
+                className="hover:text-orange-500 transition-colors"
+              >
+                API
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
 
       <AgentDialog
         key={editingAgent?.id || "new"}
@@ -470,5 +858,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-
