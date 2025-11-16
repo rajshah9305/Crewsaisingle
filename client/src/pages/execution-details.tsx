@@ -1,16 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Execution } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
-import { Link, useParams } from "wouter";
-import { apiRequest } from "@/lib/queryClient";
+import { Link, useParams, useLocation } from "wouter";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ExecutionDetailsPage() {
   const params = useParams();
   const executionId = params.id;
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const { data: execution, isLoading, error } = useQuery<Execution>({
     queryKey: [`/api/executions/${executionId}`],
@@ -24,6 +27,44 @@ export default function ExecutionDetailsPage() {
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
+
+  const retryMutation = useMutation({
+    mutationFn: async () => {
+      if (!execution?.agentId) {
+        throw new Error("Agent ID not found");
+      }
+      const newExecution = await apiRequest("POST", `/api/agents/${execution.agentId}/execute`);
+      return newExecution as Execution;
+    },
+    onSuccess: (newExecution) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/executions"] });
+      toast({
+        title: "Execution retried",
+        description: "A new execution has been started.",
+      });
+      // Navigate to the new execution
+      setLocation(`/executions/${newExecution.id}`);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to retry",
+        description: error?.response?.data?.error || error?.message || "Could not retry execution. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRetry = () => {
+    if (execution?.status === "running") {
+      toast({
+        title: "Cannot retry",
+        description: "This execution is still running. Please wait for it to complete.",
+        variant: "destructive",
+      });
+      return;
+    }
+    retryMutation.mutate();
+  };
 
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden antialiased">
@@ -91,11 +132,25 @@ export default function ExecutionDetailsPage() {
           ) : (
             <Card className="border border-black-10 shadow-sm bg-white">
               <CardHeader className="pb-3 px-3 sm:px-4 md:px-5 pt-3 sm:pt-4 md:pt-5">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-black">
-                    {execution.agentName}
-                  </CardTitle>
-                  <StatusBadge status={execution.status as "running" | "completed" | "failed"} />
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-black">
+                      {execution.agentName}
+                    </CardTitle>
+                    <StatusBadge status={execution.status as "running" | "completed" | "failed"} />
+                  </div>
+                  {execution.status !== "running" && (
+                    <Button
+                      onClick={handleRetry}
+                      disabled={retryMutation.isPending}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 border-black-20 hover:bg-black-5"
+                    >
+                      <RotateCcw className={`h-4 w-4 ${retryMutation.isPending ? "animate-spin" : ""}`} />
+                      {retryMutation.isPending ? "Retrying..." : "Retry"}
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 px-3 sm:px-4 md:px-5 pb-3 sm:pb-4 md:pb-5">

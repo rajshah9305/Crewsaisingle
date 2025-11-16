@@ -10,16 +10,21 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Sparkles } from "lucide-react";
+import { TemplateSelector } from "@/components/template-selector";
+import { useState } from "react";
+import type { AgentTemplate } from "@/lib/agent-templates";
 
 interface AgentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   agent?: Agent;
+  template?: AgentTemplate;
 }
 
-export function AgentDialog({ open, onOpenChange, agent }: AgentDialogProps) {
+export function AgentDialog({ open, onOpenChange, agent, template }: AgentDialogProps) {
   const { toast } = useToast();
+  const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
 
   const form = useForm<InsertAgent>({
     resolver: zodResolver(insertAgentSchema),
@@ -29,6 +34,12 @@ export function AgentDialog({ open, onOpenChange, agent }: AgentDialogProps) {
       goal: agent.goal,
       backstory: agent.backstory,
       tasks: agent.tasks,
+    } : template ? {
+      name: template.agent.name,
+      role: template.agent.role,
+      goal: template.agent.goal,
+      backstory: template.agent.backstory,
+      tasks: template.agent.tasks,
     } : {
       name: "",
       role: "",
@@ -37,6 +48,20 @@ export function AgentDialog({ open, onOpenChange, agent }: AgentDialogProps) {
       tasks: [""],
     },
   });
+
+  const handleTemplateSelect = (selectedTemplate: AgentTemplate) => {
+    form.reset({
+      name: selectedTemplate.agent.name,
+      role: selectedTemplate.agent.role,
+      goal: selectedTemplate.agent.goal,
+      backstory: selectedTemplate.agent.backstory,
+      tasks: selectedTemplate.agent.tasks,
+    });
+    toast({
+      title: "Template loaded",
+      description: `${selectedTemplate.name} template has been loaded. You can customize it before creating.`,
+    });
+  };
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -103,12 +128,28 @@ export function AgentDialog({ open, onOpenChange, agent }: AgentDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-agent">
         <DialogHeader>
-          <DialogTitle>{agent ? "Edit Agent" : "Create New Agent"}</DialogTitle>
-          <DialogDescription>
-            {agent 
-              ? "Update the agent's configuration and tasks."
-              : "Configure your AI agent with a role, goal, and specific tasks to execute."}
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle>{agent ? "Edit Agent" : "Create New Agent"}</DialogTitle>
+              <DialogDescription>
+                {agent 
+                  ? "Update the agent's configuration and tasks."
+                  : "Configure your AI agent with a role, goal, and specific tasks to execute."}
+              </DialogDescription>
+            </div>
+            {!agent && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setTemplateSelectorOpen(true)}
+                className="gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Templates
+              </Button>
+            )}
+          </div>
         </DialogHeader>
 
         <Form {...form}>
@@ -261,6 +302,11 @@ export function AgentDialog({ open, onOpenChange, agent }: AgentDialogProps) {
             </DialogFooter>
           </form>
         </Form>
+        <TemplateSelector
+          open={templateSelectorOpen}
+          onOpenChange={setTemplateSelectorOpen}
+          onSelectTemplate={handleTemplateSelect}
+        />
       </DialogContent>
     </Dialog>
   );

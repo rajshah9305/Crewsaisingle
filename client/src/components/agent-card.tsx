@@ -1,8 +1,8 @@
-import { Agent } from "@shared/schema";
+import { Agent, InsertAgent } from "@shared/schema";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GripVertical, Play, Pencil, Trash2, Bot } from "lucide-react";
+import { GripVertical, Play, Pencil, Trash2, Bot, Copy } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -42,6 +42,37 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
     if (window.confirm(`Are you sure you want to delete "${agent.name}"?`)) {
       deleteMutation.mutate(agent.id);
     }
+  };
+
+  const cloneMutation = useMutation({
+    mutationFn: async () => {
+      const clonedAgent: InsertAgent = {
+        name: `${agent.name} (Copy)`,
+        role: agent.role,
+        goal: agent.goal,
+        backstory: agent.backstory,
+        tasks: agent.tasks,
+      };
+      return await apiRequest("POST", "/api/agents", clonedAgent);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/agents"] });
+      toast({
+        title: "Agent cloned",
+        description: `${agent.name} has been cloned successfully.`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to clone the agent. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleClone = () => {
+    cloneMutation.mutate();
   };
 
   return (
@@ -95,7 +126,7 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
         </div>
       </CardContent>
       
-      <CardFooter className="gap-2 pt-3 border-t border-black-10 bg-white-subtle px-4 pb-3">
+      <CardFooter className="gap-1.5 pt-3 border-t border-black-10 bg-white-subtle px-4 pb-3">
         <Button
           onClick={() => onExecute(agent)}
           size="sm"
@@ -111,9 +142,22 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           size="sm"
           className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-8 w-8 p-0 touch-manipulation active:scale-95"
           data-testid={`button-edit-${agent.id}`}
+          title="Edit"
         >
           <Pencil className="h-4 w-4" />
           <span className="sr-only">Edit</span>
+        </Button>
+        <Button
+          onClick={handleClone}
+          variant="outline"
+          size="sm"
+          disabled={cloneMutation.isPending}
+          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-8 w-8 p-0 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          data-testid={`button-clone-${agent.id}`}
+          title="Clone"
+        >
+          <Copy className="h-4 w-4" />
+          <span className="sr-only">Clone</span>
         </Button>
         <Button
           onClick={handleDelete}
@@ -122,6 +166,7 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           disabled={deleteMutation.isPending}
           className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-8 w-8 p-0 touch-manipulation active:scale-95"
           data-testid={`button-delete-${agent.id}`}
+          title="Delete"
         >
           <Trash2 className="h-4 w-4" />
           <span className="sr-only">Delete</span>
