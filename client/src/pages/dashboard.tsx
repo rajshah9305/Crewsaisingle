@@ -123,7 +123,7 @@ export default function Dashboard() {
     <div className="h-screen flex flex-col bg-gradient-to-br from-white via-white-subtle to-white-secondary overflow-hidden antialiased">
       {/* Compact Header */}
       <header className="border-b border-black-10 bg-white/80 backdrop-blur-sm z-50 flex-shrink-0 shadow-sm">
-        <div className="w-full px-4 py-3">
+        <div className="w-full max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <img 
@@ -185,9 +185,9 @@ export default function Dashboard() {
       </header>
 
       {/* Stats Bar */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle/50">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm">
+      <div className="flex-shrink-0 border-b border-black-10 bg-white-subtle/60">
+        <div className="w-full max-w-6xl mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
             <div className="h-10 w-10 rounded-lg bg-black-5 flex items-center justify-center border border-black-10">
               <Bot className="h-5 w-5 text-black-60" />
             </div>
@@ -196,7 +196,7 @@ export default function Dashboard() {
               <div className="text-lg font-bold text-black">{agents.length}</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
             <div className="h-10 w-10 rounded-lg bg-orange/10 flex items-center justify-center border border-orange/20">
               <Loader2 className="h-5 w-5 text-orange" />
             </div>
@@ -205,7 +205,7 @@ export default function Dashboard() {
               <div className="text-lg font-bold text-orange">{runningCount}</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
             <div className="h-10 w-10 rounded-lg bg-black-5 flex items-center justify-center border border-black-20">
               <CheckCircle2 className="h-5 w-5 text-black-60" />
             </div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
               <div className="text-lg font-bold text-black">{completedCount}</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
             <div className="h-10 w-10 rounded-lg bg-orange/10 flex items-center justify-center border border-orange/20">
               <XCircle className="h-5 w-5 text-orange" />
             </div>
@@ -227,9 +227,10 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content - Single Screen Grid Layout */}
-      <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
-        {/* LEFT PANE - Agents Grid */}
-        <div className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm">
+      <div className="flex-1 overflow-hidden">
+        <div className="w-full max-w-6xl mx-auto h-full grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+          {/* LEFT PANE - Agents Grid */}
+          <div className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm card-hover">
           <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle">
             <h2 className="font-display text-base font-bold text-black">Agents</h2>
           </div>
@@ -279,8 +280,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* RIGHT PANE - Latest Execution */}
-        <div className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm">
+          {/* RIGHT PANE - Latest Execution */}
+          <div className="flex flex-col overflow-hidden bg-white rounded-lg border border-black-10 shadow-sm card-hover">
           <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle">
             <h2 className="font-display text-base font-bold text-black">Latest Execution</h2>
           </div>
@@ -298,7 +299,10 @@ export default function Dashboard() {
                 <p className="font-sans text-sm text-black-60">Execute an agent to see results</p>
               </div>
             ) : (
-              <Card data-testid={`execution-${latestExecution.id}`} className="border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+              <Card
+                data-testid={`execution-${latestExecution.id}`}
+                className="border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white"
+              >
                 <CardHeader className="pb-3 px-4 pt-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
