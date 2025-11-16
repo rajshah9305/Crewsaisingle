@@ -100,6 +100,31 @@ if (config.performance.enableResponseCache) {
 storage.initialize()
   .then(() => {
     logger.info('Database initialized successfully');
+    
+    // Start periodic cleanup of stuck executions (every 5 minutes)
+    const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+    const EXECUTION_TIMEOUT_MINUTES = 10; // Consider executions stuck after 10 minutes
+    
+    setInterval(async () => {
+      try {
+        const cleanedCount = await storage.cleanupStuckExecutions(EXECUTION_TIMEOUT_MINUTES);
+        if (cleanedCount > 0) {
+          logger.info('Periodic cleanup completed', {
+            cleanedExecutions: cleanedCount,
+            timeoutMinutes: EXECUTION_TIMEOUT_MINUTES
+          });
+        }
+      } catch (error) {
+        logger.error('Periodic cleanup failed', {
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    }, CLEANUP_INTERVAL_MS);
+    
+    logger.info('Periodic cleanup job started', {
+      intervalMinutes: CLEANUP_INTERVAL_MS / 60000,
+      timeoutMinutes: EXECUTION_TIMEOUT_MINUTES
+    });
   })
   .catch(err => {
     logger.error('Database initialization failed', {

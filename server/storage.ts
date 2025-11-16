@@ -2,7 +2,7 @@ import { type Agent, type InsertAgent, type Execution, type InsertExecution, age
 import config from "./config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import logger from "./utils/logger";
 
 const { Pool } = pg;
@@ -19,6 +19,7 @@ export interface IStorage {
   getExecution(id: string): Promise<Execution | undefined>;
   createExecution(execution: InsertExecution): Promise<Execution>;
   updateExecution(id: string, updates: Partial<Execution>): Promise<Execution | undefined>;
+  cleanupStuckExecutions(timeoutMinutes?: number): Promise<number>;
 
   // Connection lifecycle management
   initialize(): Promise<void>;
@@ -483,6 +484,49 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       logger.error('Failed to update execution', {
         executionId: id,
+        error: error instanceof Error ? error.message : String(error)
+      });
+      
+      if (error instanceof Error && error.message?.includes('DATABASE_URL')) {
+        throw new Error("Database configuration error: DATABASE_URL environment variable is not properly set.");
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Clean up executions that have been stuck in "running" state for too long
+   * 
+   * @param timeoutMinutes Number of minutes after which an execution is considered stuck (default: 10)
+   * @returns Number of executions cleaned up
+   */
+  async cleanupStuckExecutions(timeoutMinutes: number = 10): Promise<number> {
+    try {
+      const db = await getDb();
+      
+      // Calculate the cutoff time
+      const cutoffTime = new Date(Date.now() - timeoutMinutes * 60 * 1000);
+      
+      // Find and update stuck executions
+      const result = await db.update(executions)
+        .set({
+          status: 'failed',
+          result: `Execution timed out after ${timeoutMinutes} minutes and was automatically cleaned up`
+        })
+        .where(sql`${executions.status} = 'running' AND ${executions.createdAt} < ${cutoffTime}`)
+        .returning();
+      
+      if (result.length > 0) {
+        logger.warn('Cleaned up stuck executions', {
+          count: result.length,
+          timeoutMinutes,
+          executionIds: result.map(e => e.id)
+        });
+      }
+      
+      return result.length;
+    } catch (error) {
+      logger.error('Failed to cleanup stuck executions', {
         error: error instanceof Error ? error.message : String(error)
       });
       
