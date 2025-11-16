@@ -18,6 +18,10 @@ import {
   CheckCircle2,
   XCircle,
   Sparkles,
+  Users,
+  Zap,
+  TrendingUp,
+  Activity,
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -30,8 +34,43 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isToday } from "date-fns";
 import { Link } from "wouter";
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  trend?: string;
+}
+
+function StatCard({ title, value, icon, trend }: StatCardProps) {
+  return (
+    <Card className="border-orange/10 hover:shadow-lg hover:border-orange/40 transition-all duration-300 bg-white">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-1.5">
+            <p className="text-[11px] font-semibold text-black-60 uppercase tracking-wide">
+              {title}
+            </p>
+            <p className="text-2xl sm:text-3xl font-extrabold text-black">
+              {value}
+            </p>
+            {trend && (
+              <p className="text-[11px] text-black-50 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-orange" />
+                {trend}
+              </p>
+            )}
+          </div>
+          <div className="p-3 sm:p-3.5 bg-gradient-to-br from-orange/5 to-orange/10 rounded-xl border border-orange/20 shadow-sm flex items-center justify-center">
+            {icon}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Dashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -153,6 +192,16 @@ export default function Dashboard() {
   const failedCount = executions.filter(
     (e) => e.status === "failed",
   ).length;
+  const completedTodayCount = executions.filter(
+    (e) =>
+      e.status === "completed" &&
+      isToday(new Date(e.createdAt as unknown as string)),
+  ).length;
+  const successDenominator = completedCount + failedCount;
+  const successRate =
+    successDenominator > 0
+      ? `${Math.round((completedCount / successDenominator) * 100)}%`
+      : "—";
   const latestExecution = executions[0];
 
   return (
@@ -229,52 +278,30 @@ export default function Dashboard() {
       {/* Stats Bar */}
       <section className="flex-shrink-0 border-b border-black-10 bg-white-subtle/60">
         <div className="w-full max-w-6xl mx-auto px-4 py-3 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
-            <div className="h-10 w-10 rounded-lg bg-black-5 flex items-center justify-center border border-black-10">
-              <Bot className="h-5 w-5 text-black-60" />
-            </div>
-            <div>
-              <div className="text-xs font-medium text-black-60">Agents</div>
-              <div className="text-lg font-bold text-black">
-                {agents.length}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
-            <div className="h-10 w-10 rounded-lg bg-orange/10 flex items-center justify-center border border-orange/20">
-              <Loader2 className="h-5 w-5 text-orange" />
-            </div>
-            <div>
-              <div className="text-xs font-medium text-black-60">Running</div>
-              <div className="text-lg font-bold text-orange">
-                {runningCount}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
-            <div className="h-10 w-10 rounded-lg bg-black-5 flex items-center justify-center border border-black-20">
-              <CheckCircle2 className="h-5 w-5 text-black-60" />
-            </div>
-            <div>
-              <div className="text-xs font-medium text-black-60">
-                Completed
-              </div>
-              <div className="text-lg font-bold text-black">
-                {completedCount}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
-            <div className="h-10 w-10 rounded-lg bg-orange/10 flex items-center justify-center border border-orange/20">
-              <XCircle className="h-5 w-5 text-orange" />
-            </div>
-            <div>
-              <div className="text-xs font-medium text-black-60">Failed</div>
-              <div className="text-lg font-bold text-orange">
-                {failedCount}
-              </div>
-            </div>
-          </div>
+          <StatCard
+            title="Total Agents"
+            value={agents.length}
+            icon={<Users className="w-5 h-5 text-orange" />}
+            trend={agents.length > 0 ? "Active in workspace" : "No agents yet"}
+          />
+          <StatCard
+            title="Active Executions"
+            value={runningCount}
+            icon={<Activity className="w-5 h-5 text-orange" />}
+            trend={runningCount > 0 ? "Running now" : "Idle"}
+          />
+          <StatCard
+            title="Completed Today"
+            value={completedTodayCount}
+            icon={<CheckCircle2 className="w-5 h-5 text-orange" />}
+            trend="Today’s successful runs"
+          />
+          <StatCard
+            title="Success Rate"
+            value={successRate}
+            icon={<Zap className="w-5 h-5 text-orange" />}
+            trend="Completed vs failed"
+          />
         </div>
       </section>
 
