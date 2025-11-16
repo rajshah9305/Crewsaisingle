@@ -130,7 +130,7 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           variant="outline"
           size="sm"
           disabled={deleteMutation.isPending}
-          className="transition-all border-black-20 hover:border-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-black h-8 sm:h-9 w-8 sm:w-9 p-0 touch-manipulation active:scale-95"
+          className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-8 sm:h-9 w-8 sm:w-9 p-0 touch-manipulation active:scale-95"
           data-testid={`button-delete-${agent.id}`}
         >
           <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

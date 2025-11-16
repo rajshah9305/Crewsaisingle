@@ -9,23 +9,23 @@ export interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const variants = {
     running: {
-      bg: "bg-blue-100",
-      text: "text-blue-700",
-      border: "border-blue-300",
+      bg: "bg-orange/10",
+      text: "text-orange",
+      border: "border-orange",
       icon: <Loader2 className="h-3.5 w-3.5 animate-spin" />,
       label: "Running"
     },
     completed: {
-      bg: "bg-green-100",
-      text: "text-green-700",
-      border: "border-green-300",
+      bg: "bg-black-5",
+      text: "text-black-80",
+      border: "border-black-20",
       icon: <CheckCircle2 className="h-3.5 w-3.5" />,
       label: "Completed"
     },
     failed: {
-      bg: "bg-red-100",
-      text: "text-red-700",
-      border: "border-red-300",
+      bg: "bg-orange/10",
+      text: "text-orange",
+      border: "border-orange",
       icon: <XCircle className="h-3.5 w-3.5" />,
       label: "Failed"
     }

@@ -162,20 +162,20 @@ export default function AgentsPage() {
             <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5">
               {error ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="text-red-600 mb-4">
+                  <div className="text-orange mb-4">
                     <p className="font-semibold text-lg">Failed to load agents</p>
                     <p className="text-sm text-black-60 mt-2">
                       {error instanceof Error ? error.message : "An unexpected error occurred"}
                     </p>
                   </div>
-                  <Button onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/agents"] })}>
+                  <Button onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/agents"] })} className="bg-orange hover:bg-orange-hover text-white">
                     Retry
                   </Button>
                 </div>
               ) : agentsLoading ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="rounded-xl border border-border/50 overflow-hidden shadow-lg">
+                    <div key={i} className="rounded-xl border border-black-10 overflow-hidden shadow-lg">
                       <div className="p-5 sm:p-6 space-y-4">
                         <div className="flex items-center gap-3">
                           <Skeleton className="h-10 w-10 rounded-lg flex-shrink-0" />

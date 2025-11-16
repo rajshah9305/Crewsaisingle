@@ -203,7 +203,7 @@ export default function Dashboard() {
                   {agentsLoading ? (
                     <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
                 {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="rounded-xl border border-border/50 overflow-hidden shadow-lg">
+                        <div key={i} className="rounded-xl border border-black-10 overflow-hidden shadow-lg">
                           <div className="p-5 sm:p-6 space-y-4">
                             <div className="flex items-center gap-3">
                               <Skeleton className="h-10 w-10 rounded-lg flex-shrink-0" />
@@ -318,7 +318,7 @@ export default function Dashboard() {
                                 </Badge>
                               )}
                               {execution.status === "failed" && (
-                                <Badge variant="outline" className="gap-1 sm:gap-1.5 bg-red-50 border-red-300 text-red-700 flex-shrink-0 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2">
+                                <Badge variant="outline" className="gap-1 sm:gap-1.5 bg-black-5 border-orange text-orange flex-shrink-0 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2">
                                   <XCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                                   <span className="font-semibold">Failed</span>
                                 </Badge>

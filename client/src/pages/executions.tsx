@@ -111,13 +111,13 @@ export default function ExecutionsPage() {
             <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5">
               {error ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="text-red-600 mb-4">
+                  <div className="text-orange mb-4">
                     <p className="font-semibold text-lg">Failed to load executions</p>
                     <p className="text-sm text-black-60 mt-2">
                       {error instanceof Error ? error.message : "An unexpected error occurred"}
                     </p>
                   </div>
-                  <Button onClick={handleRefresh}>
+                  <Button onClick={handleRefresh} className="bg-orange hover:bg-orange-hover text-white">
                     Retry
                   </Button>
                 </div>
