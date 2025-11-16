@@ -10,6 +10,7 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "validate": "node scripts/validate-env.cjs && node scripts/validate-deps.cjs",
+    "test": "npm run validate",
     "setup": "npm install && npm run validate && npm run db:push"
   },
   "dependencies": {
