@@ -17,7 +17,9 @@ export const insertAgentSchema = createInsertSchema(agents).omit({
   id: true,
   order: true,
 }).extend({
-  tasks: z.array(z.string()).min(1, "At least one task is required"),
+  tasks: z.array(z.string().min(1, "Task cannot be empty"))
+    .min(1, "At least one task is required")
+    .max(50, "Maximum 50 tasks allowed per agent"),
 });
 
 export type InsertAgent = z.infer<typeof insertAgentSchema>;

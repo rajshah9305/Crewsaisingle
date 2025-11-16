@@ -79,68 +79,68 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
     <Card
       ref={provided?.innerRef}
       {...provided?.draggableProps}
-      className="group relative overflow-hidden border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:border-orange/30 touch-manipulation"
+      className="group relative overflow-hidden border border-black-10 shadow-sm hover:shadow-lg transition-all duration-300 bg-white hover:border-orange/40 hover:-translate-y-1 touch-manipulation"
       data-testid={`card-agent-${agent.id}`}
     >
-      <CardHeader className="space-y-0 pb-3 px-4 pt-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-start gap-2 flex-1 min-w-0">
+      <CardHeader className="space-y-0 pb-4 px-5 pt-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
             <div
               {...provided?.dragHandleProps}
-              className="cursor-grab active:cursor-grabbing mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded hover:bg-black-5 touch-none"
+              className="cursor-grab active:cursor-grabbing mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1.5 rounded-md hover:bg-black-5 touch-none"
               data-testid={`button-drag-${agent.id}`}
             >
               <GripVertical className="h-4 w-4 text-black-40" />
             </div>
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-sm font-bold mb-1 text-black tracking-tight line-clamp-1" data-testid={`text-agent-name-${agent.id}`}>
+              <CardTitle className="text-base font-black mb-1.5 text-black tracking-tight line-clamp-1" data-testid={`text-agent-name-${agent.id}`}>
                 {agent.name}
               </CardTitle>
-              <CardDescription className="line-clamp-1 text-xs font-medium text-black-60" data-testid={`text-agent-role-${agent.id}`}>
+              <CardDescription className="line-clamp-1 text-sm font-semibold text-black-60" data-testid={`text-agent-role-${agent.id}`}>
                 {agent.role}
               </CardDescription>
             </div>
           </div>
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-orange/10 to-orange/5 flex items-center justify-center flex-shrink-0 border border-orange/20">
-            <Bot className="h-5 w-5 text-orange" />
+          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-orange/15 to-orange/5 flex items-center justify-center flex-shrink-0 border border-orange/30 shadow-sm">
+            <Bot className="h-6 w-6 text-orange" />
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="pb-3 space-y-2 px-4">
-        <div className="p-2 rounded-md bg-black-5 border border-black-10">
-          <p className="text-xs leading-relaxed line-clamp-2 text-black-80" data-testid={`text-agent-goal-${agent.id}`}>{agent.goal}</p>
+      <CardContent className="pb-4 space-y-3 px-5">
+        <div className="p-3 rounded-lg bg-black-5 border border-black-10">
+          <p className="text-sm leading-relaxed line-clamp-2 text-black-80 font-medium" data-testid={`text-agent-goal-${agent.id}`}>{agent.goal}</p>
         </div>
         
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {agent.tasks.slice(0, 2).map((task, idx) => (
-            <Badge key={idx} variant="secondary" className="text-xs font-medium px-2 py-1 bg-white-subtle border border-black-10 text-black-80">
+            <Badge key={idx} variant="secondary" className="text-xs font-semibold px-2.5 py-1 bg-white border border-black-10 text-black-80 hover:bg-black-5 transition-colors">
               {task.length > 25 ? task.substring(0, 25) + "..." : task}
             </Badge>
           ))}
           {agent.tasks.length > 2 && (
-            <Badge variant="outline" className="text-xs font-bold px-2 py-1 border border-black-20 text-black-60">
+            <Badge variant="outline" className="text-xs font-bold px-2.5 py-1 border border-black-20 text-black-60">
               +{agent.tasks.length - 2}
             </Badge>
           )}
         </div>
       </CardContent>
       
-      <CardFooter className="gap-1.5 pt-3 border-t border-black-10 bg-white-subtle px-4 pb-3">
+      <CardFooter className="gap-2 pt-4 border-t border-black-10 bg-white-subtle px-5 pb-4">
         <Button
           onClick={() => onExecute(agent)}
           size="sm"
-          className="flex-1 bg-orange hover:bg-orange-hover text-white font-semibold transition-all h-8 text-xs touch-manipulation active:scale-95 shadow-sm"
+          className="flex-1 bg-orange hover:bg-orange-hover text-white font-bold transition-all h-9 text-sm touch-manipulation active:scale-95 shadow-md hover:shadow-lg"
           data-testid={`button-execute-${agent.id}`}
         >
-          <Play className="h-3.5 w-3.5 mr-1.5 fill-current" />
+          <Play className="h-4 w-4 mr-2 fill-current" />
           Execute
         </Button>
         <Button
           onClick={() => onEdit(agent)}
           variant="outline"
           size="sm"
-          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-8 w-8 p-0 touch-manipulation active:scale-95"
+          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-9 w-9 p-0 touch-manipulation active:scale-95"
           data-testid={`button-edit-${agent.id}`}
           title="Edit"
         >
@@ -152,7 +152,7 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           variant="outline"
           size="sm"
           disabled={cloneMutation.isPending}
-          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-8 w-8 p-0 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="transition-all border-black-20 hover:border-black hover:bg-black-5 text-black h-9 w-9 p-0 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           data-testid={`button-clone-${agent.id}`}
           title="Clone"
         >
@@ -164,7 +164,7 @@ export function AgentCard({ agent, onEdit, onExecute, provided }: AgentCardProps
           variant="outline"
           size="sm"
           disabled={deleteMutation.isPending}
-          className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-8 w-8 p-0 touch-manipulation active:scale-95"
+          className="transition-all border-black-20 hover:border-orange hover:bg-orange/10 hover:text-orange disabled:opacity-50 disabled:cursor-not-allowed text-black h-9 w-9 p-0 touch-manipulation active:scale-95"
           data-testid={`button-delete-${agent.id}`}
           title="Delete"
         >

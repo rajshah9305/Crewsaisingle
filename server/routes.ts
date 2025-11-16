@@ -5,6 +5,7 @@ import { insertAgentSchema } from "@shared/schema";
 import { executeAgentTask } from "./gemini";
 import { validateRequest, validateId, asyncHandler } from "./utils/validation";
 import logger from "./utils/logger";
+import config from "./config";
 import { z } from "zod";
 
 /**
@@ -194,8 +195,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add execution performance tracking
       const executionStartTime = Date.now();
       
-      // Execution timeout (5 minutes)
-      const EXECUTION_TIMEOUT_MS = 5 * 60 * 1000;
+      // Execution timeout from config (default: 5 minutes)
+      const EXECUTION_TIMEOUT_MS = config.execution.timeoutMs;
 
       // Execute the task in the background with proper error handling and timeout
       const executeWithTimeout = async () => {

@@ -41,6 +41,7 @@ const envSchema = z.object({
   // Timeout configurations
   REQUEST_TIMEOUT_MS: z.string().transform(val => parseInt(val, 10)).default('30000'),
   API_TIMEOUT_MS: z.string().transform(val => parseInt(val, 10)).default('10000'),
+  EXECUTION_TIMEOUT_MS: z.string().transform(val => parseInt(val, 10)).default('300000'), // 5 minutes
 });
 
 // Parse environment variables with defaults
@@ -98,6 +99,9 @@ const baseConfig = {
   api: {
     googleApiKey: env.GOOGLE_API_KEY,
     timeoutMs: env.API_TIMEOUT_MS,
+  },
+  execution: {
+    timeoutMs: env.EXECUTION_TIMEOUT_MS,
   },
   security: {
     allowedOrigins: env.ALLOWED_ORIGINS.split(','),

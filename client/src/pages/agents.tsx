@@ -97,28 +97,28 @@ export default function AgentsPage() {
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-white via-white-subtle to-white-secondary overflow-hidden antialiased">
       {/* Header */}
-      <header className="border-b border-black-10 bg-white/80 backdrop-blur-sm z-50 flex-shrink-0 shadow-sm">
-        <div className="w-full px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+      <header className="border-b border-black-10 bg-white/95 backdrop-blur-md z-50 flex-shrink-0 shadow-sm">
+        <div className="w-full max-w-[1200px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 min-w-0 flex-1">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-black-5">
-                  <ArrowLeft className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="h-10 w-10 p-0 hover:bg-black-5 rounded-lg">
+                  <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>
               <img 
                 src="/logo.png" 
                 alt="RAJAI Platform Logo" 
-                className="h-10 w-10 object-contain flex-shrink-0"
+                className="h-12 w-12 object-contain flex-shrink-0"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
               <div className="min-w-0 flex-1">
-                <h1 className="font-display text-xl font-bold text-black tracking-tight truncate">
+                <h1 className="font-display text-2xl font-black text-black tracking-tight leading-none mb-1">
                   Agent Management
                 </h1>
-                <p className="font-sans text-xs text-black-60 font-medium mt-0.5 truncate hidden xs:block">
+                <p className="font-sans text-sm text-black-60 font-semibold tracking-wide">
                   Create, configure, and manage AI agents
                 </p>
               </div>
@@ -131,15 +131,15 @@ export default function AgentsPage() {
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
           {/* Action Bar */}
-          <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle/50">
-            <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <h2 className="font-display text-base font-bold text-black truncate">
+          <div className="flex-shrink-0 px-6 py-4 border-b border-black-10 bg-white-subtle">
+            <div className="max-w-[1200px] mx-auto flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <h2 className="font-display text-lg font-black text-black truncate">
                   All Agents
                 </h2>
                 {agents.length > 0 && (
-                  <div className="flex items-center justify-center min-w-[22px] h-6 px-2 rounded-full bg-white border border-black-10 flex-shrink-0 shadow-sm">
-                    <span className="font-sans text-xs font-bold text-black">
+                  <div className="flex items-center justify-center min-w-[28px] h-7 px-3 rounded-full bg-white border border-black-10 flex-shrink-0 shadow-sm">
+                    <span className="font-sans text-sm font-black text-black">
                       {agents.length}
                     </span>
                   </div>
@@ -149,7 +149,7 @@ export default function AgentsPage() {
                 onClick={handleCreateNew} 
                 data-testid="button-create-agent"
                 size="sm"
-                className="bg-orange hover:bg-orange-hover text-white font-semibold text-sm h-9 px-4 shadow-sm hover:shadow-md transition-all w-full xs:w-auto touch-manipulation"
+                className="bg-orange hover:bg-orange-hover text-white font-bold text-sm h-10 px-5 shadow-md hover:shadow-lg transition-all w-full xs:w-auto touch-manipulation"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 <span className="whitespace-nowrap">Create Agent</span>
@@ -159,7 +159,7 @@ export default function AgentsPage() {
 
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto overscroll-contain">
-            <div className="px-4 py-4">
+            <div className="max-w-[1200px] mx-auto px-6 py-6">
               {error ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4">
@@ -173,26 +173,26 @@ export default function AgentsPage() {
                   </Button>
                 </div>
               ) : agentsLoading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="rounded-lg border border-black-10 overflow-hidden shadow-sm bg-white">
-                      <div className="p-4 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Skeleton className="h-9 w-9 rounded-lg flex-shrink-0 border border-black-10" />
+                    <div key={i} className="rounded-xl border border-black-10 overflow-hidden shadow-md bg-white">
+                      <div className="p-5 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-11 w-11 rounded-xl flex-shrink-0 border border-black-10" />
                           <div className="flex-1 space-y-2 min-w-0">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/2" />
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
                           </div>
                         </div>
-                        <Skeleton className="h-12 w-full border border-black-10 rounded-md" />
-                        <div className="flex gap-1.5 flex-wrap">
-                          <Skeleton className="h-6 w-20 border border-black-10 rounded" />
-                          <Skeleton className="h-6 w-24 border border-black-10 rounded" />
+                        <Skeleton className="h-14 w-full border border-black-10 rounded-lg" />
+                        <div className="flex gap-2 flex-wrap">
+                          <Skeleton className="h-7 w-24 border border-black-10 rounded" />
+                          <Skeleton className="h-7 w-28 border border-black-10 rounded" />
                         </div>
-                        <div className="flex gap-1.5 pt-2">
-                          <Skeleton className="h-8 flex-1 border border-black-10 rounded" />
-                          <Skeleton className="h-8 w-8 border border-black-10 rounded" />
-                          <Skeleton className="h-8 w-8 border border-black-10 rounded" />
+                        <div className="flex gap-2 pt-2">
+                          <Skeleton className="h-9 flex-1 border border-black-10 rounded-md" />
+                          <Skeleton className="h-9 w-9 border border-black-10 rounded-md" />
+                          <Skeleton className="h-9 w-9 border border-black-10 rounded-md" />
                         </div>
                       </div>
                     </div>
@@ -207,7 +207,7 @@ export default function AgentsPage() {
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3"
+                        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
                       >
                         {agents.map((agent, index) => (
                           <Draggable key={agent.id} draggableId={agent.id} index={index}>

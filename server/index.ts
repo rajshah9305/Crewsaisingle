@@ -98,8 +98,23 @@ if (config.performance.enableResponseCache) {
 
 // Initialize database connection at startup
 storage.initialize()
-  .then(() => {
+  .then(async () => {
     logger.info('Database initialized successfully');
+    
+    // Clean up any stuck executions from previous server crashes
+    try {
+      const cleanedCount = await storage.cleanupStuckExecutions(0);
+      if (cleanedCount > 0) {
+        logger.info('Startup cleanup completed', {
+          cleanedExecutions: cleanedCount,
+          message: 'Cleaned up executions stuck from previous server instance'
+        });
+      }
+    } catch (error) {
+      logger.error('Startup cleanup failed', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
     
     // Start periodic cleanup of stuck executions (every 5 minutes)
     const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes

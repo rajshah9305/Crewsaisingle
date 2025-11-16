@@ -35,28 +35,28 @@ export default function ExecutionsPage() {
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-white via-white-subtle to-white-secondary overflow-hidden antialiased">
       {/* Header */}
-      <header className="border-b border-black-10 bg-white/80 backdrop-blur-sm z-50 flex-shrink-0 shadow-sm">
-        <div className="w-full px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+      <header className="border-b border-black-10 bg-white/95 backdrop-blur-md z-50 flex-shrink-0 shadow-sm">
+        <div className="w-full max-w-[1200px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 min-w-0 flex-1">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-black-5">
-                  <ArrowLeft className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="h-10 w-10 p-0 hover:bg-black-5 rounded-lg">
+                  <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>
               <img 
                 src="/logo.png" 
                 alt="RAJAI Platform Logo" 
-                className="h-10 w-10 object-contain flex-shrink-0"
+                className="h-12 w-12 object-contain flex-shrink-0"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
               <div className="min-w-0 flex-1">
-                <h1 className="font-display text-xl font-bold text-black tracking-tight truncate">
+                <h1 className="font-display text-2xl font-black text-black tracking-tight leading-none mb-1">
                   Execution History
                 </h1>
-                <p className="font-sans text-xs text-black-60 font-medium mt-0.5 truncate hidden xs:block">
+                <p className="font-sans text-sm text-black-60 font-semibold tracking-wide">
                   Monitor and review agent execution results
                 </p>
               </div>
@@ -69,17 +69,17 @@ export default function ExecutionsPage() {
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
           {/* Stats Bar */}
-          <div className="flex-shrink-0 px-4 py-3 border-b border-black-10 bg-white-subtle/50">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex-shrink-0 px-6 py-4 border-b border-black-10 bg-white-subtle">
+            <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3 flex-wrap">
-                <h2 className="font-display text-base font-bold text-black">
+                <h2 className="font-display text-lg font-black text-black">
                   All Executions
                 </h2>
                 {executions.length > 0 && (
                   <div className="flex items-center gap-2 flex-wrap">
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white border border-black-10 shadow-sm">
-                      <span className="text-xs font-semibold text-black-60">Total:</span>
-                      <span className="text-xs font-bold text-black">{executions.length}</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-black-10 shadow-sm">
+                      <span className="text-xs font-bold text-black-60 uppercase tracking-wider">Total:</span>
+                      <span className="text-sm font-black text-black">{executions.length}</span>
                     </div>
                     {runningCount > 0 && (
                       <StatusBadge status="running" />
@@ -97,10 +97,10 @@ export default function ExecutionsPage() {
                 onClick={handleRefresh}
                 variant="outline"
                 size="sm"
-                className="h-9 px-3 text-sm border-black-20 hover:bg-black-5"
+                className="h-10 px-4 text-sm font-semibold border-black-20 hover:bg-black-5 hover:border-black-40 transition-all"
                 disabled={isLoading}
               >
-                <RefreshCw className={`h-4 w-4 mr-1.5 ${isLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
             </div>
@@ -108,7 +108,7 @@ export default function ExecutionsPage() {
 
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto overscroll-contain">
-            <div className="px-4 py-4">
+            <div className="max-w-[1200px] mx-auto px-6 py-6">
               {error ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4">
@@ -146,36 +146,36 @@ export default function ExecutionsPage() {
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {executions.map((execution) => (
                     <Link key={execution.id} href={`/executions/${execution.id}`}>
                       <Card 
                         data-testid={`execution-${execution.id}`} 
-                        className="border border-black-10 shadow-sm hover:shadow-md transition-all duration-200 bg-white cursor-pointer"
+                        className="border border-black-10 shadow-md hover:shadow-lg transition-all duration-300 bg-white cursor-pointer hover:border-orange/30 hover:-translate-y-0.5"
                       >
-                        <CardHeader className="pb-3 px-4 pt-4">
+                        <CardHeader className="pb-4 px-5 pt-5">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2 flex-wrap">
                                 <CardTitle 
-                                  className="text-base font-bold text-black truncate" 
+                                  className="text-lg font-black text-black truncate" 
                                   data-testid={`text-execution-agent-${execution.id}`}
                                 >
                                   {execution.agentName}
                                 </CardTitle>
                                 <StatusBadge status={execution.status as "running" | "completed" | "failed"} />
                               </div>
-                              <CardDescription className="text-sm font-medium text-black-60 truncate">
+                              <CardDescription className="text-sm font-semibold text-black-60 truncate">
                                 {formatDistanceToNow(new Date(execution.createdAt), { addSuffix: true })}
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
                         {execution.result && (
-                          <CardContent className="pt-0 px-4 pb-4">
-                            <div className="bg-black-5 rounded-lg p-3 border border-black-10">
+                          <CardContent className="pt-0 px-5 pb-5">
+                            <div className="bg-black-5 rounded-xl p-4 border border-black-10">
                               <pre 
-                                className="font-mono text-xs whitespace-pre-wrap break-words text-black-80 overflow-x-auto leading-relaxed" 
+                                className="font-mono text-sm whitespace-pre-wrap break-words text-black-80 overflow-x-auto leading-relaxed" 
                                 data-testid={`text-execution-result-${execution.id}`}
                               >
                                 {execution.result}

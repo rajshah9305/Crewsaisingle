@@ -292,6 +292,7 @@ The application includes comprehensive logging with Winston:
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 100 |
 | `ENABLE_RESPONSE_CACHE` | Enable API response caching | false |
 | `CACHE_TTL_SECONDS` | Cache TTL in seconds | 300 |
+| `EXECUTION_TIMEOUT_MS` | Agent execution timeout in ms | 300000 (5 min) |
 
 ## 🤝 Contributing
 
