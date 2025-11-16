@@ -172,10 +172,13 @@ export default function Dashboard() {
               />
               <div className="min-w-0 flex-1">
                 <h1
-                  className="font-display text-xl font-bold text-black tracking-tight truncate"
+                  className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight truncate"
                   data-testid="text-app-title"
                 >
-                  RAJAI Platform
+                  <span className="gradient-text">RAJ&nbsp;AI</span>
+                  <span className="ml-2 hidden sm:inline text-black/70 font-semibold text-base sm:text-lg align-middle">
+                    multi-agent orchestration
+                  </span>
                 </h1>
               </div>
             </div>
@@ -225,7 +228,7 @@ export default function Dashboard() {
 
       {/* Stats Bar */}
       <section className="flex-shrink-0 border-b border-black-10 bg-white-subtle/60">
-        <div className="w-full max-w-6xl mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="w-full max-w-6xl mx-auto px-4 py-3 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white border border-black-10 shadow-sm card-hover">
             <div className="h-10 w-10 rounded-lg bg-black-5 flex items-center justify-center border border-black-10">
               <Bot className="h-5 w-5 text-black-60" />
