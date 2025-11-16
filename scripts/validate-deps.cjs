@@ -14,7 +14,7 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
 // Required dependencies
 const requiredDeps = [
-  '@google/genai',
+  '@google/generative-ai',
   '@neondatabase/serverless',
   'drizzle-orm',
   'express',
