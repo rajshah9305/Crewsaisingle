@@ -57,8 +57,8 @@ ${validTasks.map((task, idx) => `${idx + 1}. ${sanitizeInput(task)}`).join('\n')
 Please execute these tasks thoroughly and provide detailed results for each one. Structure your response clearly, showing your work for each task.`;
 
     // Get the specific model from the genAI instance
-    // Using stable Gemini 2.0 Flash model for reliable performance
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    // Using stable Gemini 2.5 Flash model for reliable performance
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Call generateContent on the model instance with the prompt string
     const result = await model.generateContent(prompt);

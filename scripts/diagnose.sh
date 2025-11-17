@@ -105,7 +105,7 @@ echo -e "${BLUE}[6/8]${NC} Testing Google API key..."
 API_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
   -H "Content-Type: application/json" \
   -d '{"contents":[{"parts":[{"text":"test"}]}]}' \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=$GOOGLE_API_KEY" 2>/dev/null || echo "000")
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GOOGLE_API_KEY" 2>/dev/null || echo "000")
 
 if [ "$API_TEST" = "200" ]; then
     echo -e "${GREEN}✓${NC} Google API key is valid"
