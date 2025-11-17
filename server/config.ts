@@ -133,7 +133,7 @@ const developmentConfig = {
     // Disable rate limiting in development
     rateLimit: {
       ...baseConfig.security.rateLimit,
-      enabled: false,
+    
     },
   },
   database: {
@@ -167,7 +167,7 @@ const productionConfig = {
     ...baseConfig.security,
     rateLimit: {
       ...baseConfig.security.rateLimit,
-      enabled: true,
+    
     },
   },
   database: {
