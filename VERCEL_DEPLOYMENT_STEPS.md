@@ -400,7 +400,27 @@ You'll see:
 
 ## 🐛 Troubleshooting
 
-### Issue 1: Build Failed
+### Issue 1: "Function Runtimes must have a valid version"
+
+**Symptoms**:
+```
+❌ Build failed
+Error: Function Runtimes must have a valid version, for example `now-php@1.0.0`.
+```
+
+**Cause**: Invalid runtime specification in vercel.json
+
+**Solution**: This has been fixed! The vercel.json no longer includes invalid runtime settings.
+
+If you still see this error:
+```bash
+git pull origin main  # Get latest fix
+git push origin main  # Trigger redeploy
+```
+
+---
+
+### Issue 2: Build Failed
 
 **Symptoms**:
 ```
@@ -438,7 +458,7 @@ Error: Command "npm run build" exited with 1
 
 ---
 
-### Issue 2: "Function Invocation Failed"
+### Issue 3: "Function Invocation Failed"
 
 **Symptoms**:
 ```
@@ -480,7 +500,7 @@ Function invocation failed
 
 ---
 
-### Issue 3: "Database Connection Failed"
+### Issue 4: "Database Connection Failed"
 
 **Symptoms**:
 ```
@@ -514,7 +534,7 @@ Function invocation failed
 
 ---
 
-### Issue 4: "API Routes Return 404"
+### Issue 5: "API Routes Return 404"
 
 **Symptoms**:
 ```
@@ -550,7 +570,7 @@ GET /api/agents → 404 Not Found
 
 ---
 
-### Issue 5: "Static Files Not Loading"
+### Issue 6: "Static Files Not Loading"
 
 **Symptoms**:
 - Blank page
