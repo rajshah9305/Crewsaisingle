@@ -41,6 +41,8 @@ npm run dev
 npm run build && npm start
 ```
 
+📖 **Need detailed setup instructions?** See [SETUP.md](SETUP.md) for a complete step-by-step guide.
+
 ## 🚀 Deploy to Vercel (Recommended)
 
 1. **Fork this repository** to your GitHub account

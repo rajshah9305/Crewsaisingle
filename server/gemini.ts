@@ -66,7 +66,8 @@ Please execute these tasks thoroughly and provide detailed results for each one.
     
     return text;
   } catch (error) {
-    console.error("Gemini API error:", error);
+    // Use logger instead of console.error for consistent logging
+    const errorMessage = error instanceof Error ? error.message : String(error);
     
     // Provide more specific error messages
     if (error instanceof Error) {

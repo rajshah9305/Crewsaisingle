@@ -32,18 +32,38 @@ envContent.split('\n').forEach(line => {
   }
 });
 
-// Required environment variables
-const requiredVars = ['GOOGLE_API_KEY', 'DATABASE_URL', 'NODE_ENV'];
-const missingVars = requiredVars.filter(varName => 
-  !envVars[varName] || 
-  envVars[varName] === 'your_google_api_key_here' || 
-  envVars[varName] === 'your_postgresql_connection_string_here'
-);
+// Required environment variables with helpful messages
+const requiredVars = {
+  'GOOGLE_API_KEY': {
+    placeholder: 'your_google_api_key_here',
+    help: 'Get your API key from: https://makersuite.google.com/app/apikey'
+  },
+  'DATABASE_URL': {
+    placeholder: 'postgresql://user:password@host:5432/database',
+    help: 'Get a free PostgreSQL database from: https://neon.tech'
+  },
+  'NODE_ENV': {
+    placeholder: null,
+    help: 'Set to "development" for local work or "production" for deployment'
+  }
+};
+
+const missingVars = [];
+for (const [varName, config] of Object.entries(requiredVars)) {
+  const value = envVars[varName];
+  if (!value || value === config.placeholder) {
+    missingVars.push({ name: varName, help: config.help });
+  }
+}
 
 if (missingVars.length > 0) {
-  console.error('❌ Missing or unconfigured environment variables:');
-  missingVars.forEach(varName => console.error(`  - ${varName}`));
-  console.error('\nPlease configure these variables in your .env file');
+  console.error('❌ Missing or unconfigured environment variables:\n');
+  missingVars.forEach(({ name, help }) => {
+    console.error(`  ❌ ${name}`);
+    console.error(`     ${help}\n`);
+  });
+  console.error('📝 Please configure these variables in your .env file');
+  console.error('💡 See SETUP.md for detailed instructions\n');
   process.exit(1);
 }
 

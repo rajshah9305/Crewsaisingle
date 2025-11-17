@@ -13,7 +13,7 @@ export interface IStorage {
   createAgent(agent: InsertAgent): Promise<Agent>;
   updateAgent(id: string, agent: InsertAgent): Promise<Agent | undefined>;
   deleteAgent(id: string): Promise<boolean>;
-  reorderAgents(agents: Agent[]): Promise<void>;
+  reorderAgents(agents: Array<{ id: string; order: number }>): Promise<void>;
   
   getAllExecutions(): Promise<Execution[]>;
   getExecution(id: string): Promise<Execution | undefined>;
@@ -361,7 +361,7 @@ export class DatabaseStorage implements IStorage {
   /**
    * Update the order of agents
    */
-  async reorderAgents(agentList: Agent[]): Promise<void> {
+  async reorderAgents(agentList: Array<{ id: string; order: number }>): Promise<void> {
     try {
       const db = await getDb();
       
@@ -555,10 +555,10 @@ const databaseStorage = new DatabaseStorage();
   }
 })();
 
-// Register shutdown handler for graceful shutdown
-process.on('SIGINT', async () => {
+// Register shutdown handlers for graceful shutdown
+const shutdownHandler = async (signal: string) => {
   try {
-    logger.info('Shutting down database connections...');
+    logger.info(`${signal} received, shutting down database connections...`);
     await databaseStorage.shutdown();
   } catch (error) {
     logger.error('Error during database shutdown', {
@@ -567,6 +567,9 @@ process.on('SIGINT', async () => {
   } finally {
     process.exit(0);
   }
-});
+};
+
+process.on('SIGINT', () => shutdownHandler('SIGINT'));
+process.on('SIGTERM', () => shutdownHandler('SIGTERM'));
 
 export const storage = databaseStorage;
