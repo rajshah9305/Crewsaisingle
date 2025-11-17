@@ -16,6 +16,8 @@
 
 ## ⚡ Quickstart
 
+### Option 1: Interactive Setup (Recommended)
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/rajshah9305/Crewsaisingle.git
@@ -24,22 +26,47 @@ cd Crewsaisingle
 # 2. Install dependencies
 npm install
 
-# 3. Set up environment variables
+# 3. Run interactive setup (guides you through configuration)
+./scripts/setup-env.sh
+
+# 4. Start development server
+npm run dev
+# Open http://localhost:5001
+```
+
+### Option 2: Manual Setup
+
+```bash
+# 1. Clone and install
+git clone https://github.com/rajshah9305/Crewsaisingle.git
+cd Crewsaisingle
+npm install
+
+# 2. Configure environment
 cp .env.example .env
 # Edit .env with your credentials:
 # - GOOGLE_API_KEY: Get from https://makersuite.google.com/app/apikey
-# - DATABASE_URL: PostgreSQL connection string (try https://neon.tech for free hosting)
+# - DATABASE_URL: Get from https://neon.tech (free PostgreSQL)
 
-# 4. Initialize the database
+# 3. Initialize database
 npm run db:push
 
-# 5. Start development server
+# 4. Start server
 npm run dev
 # Open http://localhost:5001
+```
 
-# For production:
+### For Production
+
+```bash
 npm run build && npm start
 ```
+
+---
+
+### 🚨 Getting "Server Error - Function Invocation Failed"?
+
+This means your environment variables need to be configured. See [QUICK_FIX.md](QUICK_FIX.md) for immediate help.
 
 📖 **Need detailed setup instructions?** See [SETUP.md](SETUP.md) for a complete step-by-step guide.
 
