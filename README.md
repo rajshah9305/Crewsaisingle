@@ -1,120 +1,64 @@
-# 🤖 RAJAI Platform - Multi-Agent Orchestration System
+# RAJAI Platform
+
+Enterprise-grade AI agent orchestration platform powered by Google Gemini 2.5 Flash. Create, manage, and execute intelligent agents with defined roles and tasks through a modern web interface.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rajshah9305/Crewsaisingle)
 
-> A modern, production-ready AI agent orchestration platform powered by Google's Gemini API. Create, manage, and execute intelligent agents with defined roles and tasks through an intuitive, visually stunning interface.
+## Features
 
-## ✨ Features
+- **Agent Management** - Full CRUD operations for AI agents with drag-and-drop reordering
+- **Task Execution** - Asynchronous execution using Google Gemini 2.5 Flash API
+- **Execution Tracking** - Real-time monitoring of agent performance and results
+- **Agent Templates** - Pre-configured templates for common use cases
+- **Modern UI** - Responsive React interface built with shadcn/ui components
+- **Enterprise Security** - Helmet.js, CORS, rate limiting, and comprehensive input validation
+- **Database Persistence** - PostgreSQL with Drizzle ORM for reliable data storage
+- **Structured Logging** - Winston-based logging with environment-specific configurations
+- **Error Handling** - Comprehensive error boundaries and graceful error recovery
 
-- 🎯 **Intelligent Agent Management** - Create, update, delete, and reorder AI agents
-- ⚡ **Real-time Task Execution** - Execute tasks using Google's Gemini 2.5 Flash API
-- 🎨 **Modern UI/UX** - Responsive React interface with shadcn/ui components
-- 🔒 **Enterprise Security** - Helmet, CORS, rate limiting, and input validation
-- 📊 **Execution Tracking** - Monitor agent performance and results in real-time
-- 🗄️ **PostgreSQL Database** - Reliable data persistence with Drizzle ORM
-- 🚀 **One-Click Deploy** - Deploy to Vercel with zero configuration
-
-## ⚡ Quickstart
-
-### Option 1: Interactive Setup (Recommended)
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/rajshah9305/Crewsaisingle.git
-cd Crewsaisingle
-
-# 2. Install dependencies
-npm install
-
-# 3. Run interactive setup (guides you through configuration)
-./scripts/setup-env.sh
-
-# 4. Start development server
-npm run dev
-# Open http://localhost:5001
-```
-
-### Option 2: Manual Setup
-
-```bash
-# 1. Clone and install
-git clone https://github.com/rajshah9305/Crewsaisingle.git
-cd Crewsaisingle
-npm install
-
-# 2. Configure environment
-cp .env.example .env
-# Edit .env with your credentials:
-# - GOOGLE_API_KEY: Get from https://makersuite.google.com/app/apikey
-# - DATABASE_URL: Get from https://neon.tech (free PostgreSQL)
-
-# 3. Initialize database
-npm run db:push
-
-# 4. Start server
-npm run dev
-# Open http://localhost:5001
-```
-
-### For Production
-
-```bash
-npm run build && npm start
-```
-
----
-
-### 🚨 Getting "Server Error - Function Invocation Failed"?
-
-This means your environment variables need to be configured. See [QUICK_FIX.md](QUICK_FIX.md) for immediate help.
-
-📖 **Need detailed setup instructions?** See [SETUP.md](SETUP.md) for a complete step-by-step guide.
-
-## 🚀 Deploy to Vercel (Recommended)
-
-1. **Fork this repository** to your GitHub account
-2. **Import to Vercel**: Click the "Deploy with Vercel" button above or visit [vercel.com/new](https://vercel.com/new)
-3. **Configure Environment Variables** in Vercel dashboard:
-   - `GOOGLE_API_KEY` - Your Google Gemini API key
-   - `DATABASE_URL` - PostgreSQL connection string
-   - `NODE_ENV` - Set to `production`
-4. **Deploy** - Vercel will automatically build and deploy your app
-
-> 💡 **Tip**: Use [Neon](https://neon.tech) for free PostgreSQL hosting with Vercel integration
-
-## 💻 Tech Stack
+## Technology Stack
 
 ### Backend
-- **Node.js** + **Express.js** - Fast, minimal web framework
-- **TypeScript** - Type-safe development
-- **Drizzle ORM** - Lightweight, type-safe database toolkit
-- **PostgreSQL** - Reliable relational database
-- **Google Gemini 2.5 Flash** - Advanced AI model
-- **Winston** - Professional logging
-- **Zod** - Runtime type validation
+- Node.js 18+ with Express.js
+- TypeScript for type safety
+- Drizzle ORM for database operations
+- PostgreSQL database
+- Google Gemini 2.5 Flash API
+- Winston for structured logging
+- Zod for runtime validation
 
 ### Frontend
-- **React 18** - Modern UI library
-- **Vite** - Lightning-fast build tool
-- **TanStack Query** - Powerful data synchronization
-- **shadcn/ui** - Beautiful, accessible components
-- **Tailwind CSS** - Utility-first styling
-- **Wouter** - Lightweight routing
+- React 18 with TypeScript
+- Vite for fast builds
+- TanStack Query for data synchronization
+- shadcn/ui component library
+- Tailwind CSS for styling
+- Wouter for routing
 
-### DevOps
-- **Vercel** - Serverless deployment platform
-- **GitHub Actions** - CI/CD automation
-- **ESBuild** - Ultra-fast bundler
+### Infrastructure
+- Vercel for serverless deployment
+- ESBuild for optimized bundling
 
-## 📦 Prerequisites
+## Prerequisites
 
-- **Node.js 18+** - [Download](https://nodejs.org/)
-- **PostgreSQL Database** - Free tier available at [Neon](https://neon.tech) or [Supabase](https://supabase.com)
-- **Google Gemini API Key** - Get yours at [Google AI Studio](https://makersuite.google.com/app/apikey)
+- Node.js 18 or higher
+- PostgreSQL database (Neon, Supabase, or self-hosted)
+- Google Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
-## 🛠️ Local Development
+## Quick Start
 
-### 1. Environment Setup
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/rajshah9305/Crewsaisingle.git
+cd Crewsaisingle
+
+# Install dependencies
+npm install
+```
+
+### Configuration
 
 Create a `.env` file in the project root:
 
@@ -130,84 +74,89 @@ ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5001
 LOG_LEVEL=debug
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
+EXECUTION_TIMEOUT_MS=300000
 ```
 
-### 2. Database Migration
+### Database Setup
 
 ```bash
-# Push schema to database
+# Initialize database schema
 npm run db:push
 
-# Verify connection
+# Verify configuration
 npm run validate
 ```
 
-### 3. Development Server
+### Development
 
 ```bash
-# Start with hot-reload
+# Start development server with hot-reload
 npm run dev
 
-# The app will be available at:
-# http://localhost:5001
+# Application available at http://localhost:5001
 ```
 
-### 4. Production Build
+### Production Build
 
 ```bash
-# Build both frontend and backend
+# Build for production
 npm run build
 
 # Start production server
 npm start
 ```
 
-## 🏛️ Project Structure
+## Deployment
+
+### Vercel
+
+1. Fork this repository to your GitHub account
+2. Import the project to [Vercel](https://vercel.com/new)
+3. Configure environment variables in Vercel dashboard:
+   - `GOOGLE_API_KEY` - Your Google Gemini API key
+   - `DATABASE_URL` - PostgreSQL connection string
+   - `NODE_ENV` - Set to `production`
+4. Deploy - Vercel will automatically build and deploy
+
+**Recommended**: Use [Neon](https://neon.tech) for managed PostgreSQL hosting with Vercel integration.
+
+## Project Structure
 
 ```
-rajai-platform/
+Crewsaisingle/
 ├── client/                 # Frontend React application
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Route pages
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── lib/             # Utilities and helpers
-│   │   └── App.tsx          # Main app component
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/          # Route pages (Dashboard, Agents, Executions, Templates)
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── lib/            # Utilities and query client
+│   │   └── App.tsx         # Main application component
 │   └── index.html
-├── server/                # Backend Express application
-│   ├── utils/           # Server utilities
-│   ├── config.ts        # Configuration management
-│   ├── routes.ts        # API route definitions
-│   ├── storage.ts       # Database operations
-│   ├── gemini.ts        # AI integration
-│   └── index.ts         # Server entry point
-├── shared/                # Shared types and schemas
-│   └── schema.ts        # Database schema & Zod validation
-├── scripts/               # Build and validation scripts
-├── .env.example           # Environment template
-├── drizzle.config.ts      # Database configuration
-├── vite.config.ts         # Vite build configuration
-├── vercel.json            # Vercel deployment config
-└── package.json           # Dependencies and scripts
+├── server/                 # Backend Express application
+│   ├── services/           # Business logic services
+│   ├── utils/              # Server utilities (logger, validation)
+│   ├── config.ts           # Configuration management
+│   ├── routes.ts           # API route definitions
+│   ├── storage.ts          # Database operations
+│   ├── gemini.ts           # Gemini API integration
+│   └── index.ts            # Server entry point
+├── shared/                 # Shared types and schemas
+│   └── schema.ts           # Database schema and Zod validation
+├── scripts/                # Build and validation scripts
+├── drizzle.config.ts       # Database configuration
+├── vite.config.ts          # Vite build configuration
+├── vercel.json             # Vercel deployment configuration
+└── package.json            # Dependencies and scripts
 ```
 
-## 🔒 Security & Best Practices
-
-- ✅ **Helmet.js** - Secure HTTP headers
-- ✅ **CORS** - Configurable cross-origin requests
-- ✅ **Rate Limiting** - Prevent API abuse (100 req/15min)
-- ✅ **Input Validation** - Zod schema validation on all endpoints
-- ✅ **Error Handling** - Structured error responses with logging
-- ✅ **Request Timeouts** - 30s timeout to prevent hanging requests
-- ✅ **Connection Pooling** - Efficient database connection management
-- ✅ **Graceful Shutdown** - Proper cleanup on process termination
-
-## 🔌 API Reference
+## API Reference
 
 ### Health Check
+
 ```http
 GET /api/health
 ```
+
 Returns system health status including database connectivity and API configuration.
 
 ### Agent Management
@@ -216,12 +165,14 @@ Returns system health status including database connectivity and API configurati
 ```http
 GET /api/agents
 ```
-Returns array of all agents ordered by their position.
 
-#### Get Single Agent
+Returns array of all agents ordered by position.
+
+#### Get Agent by ID
 ```http
 GET /api/agents/:id
 ```
+
 Returns detailed information about a specific agent.
 
 #### Create Agent
@@ -250,7 +201,9 @@ Content-Type: application/json
 {
   "name": "Updated Name",
   "role": "Updated Role",
-  ...
+  "goal": "Updated Goal",
+  "backstory": "Updated Backstory",
+  "tasks": ["Task 1", "Task 2"]
 }
 ```
 
@@ -278,59 +231,75 @@ Content-Type: application/json
 ```http
 POST /api/agents/:id/execute
 ```
-Starts asynchronous execution of agent tasks. Returns 202 Accepted with execution ID.
+
+Starts asynchronous execution of agent tasks. Returns `202 Accepted` with execution ID.
 
 #### List Executions
 ```http
 GET /api/executions?limit=10
 ```
-Returns array of executions ordered by creation date (newest first).
+
+Returns array of executions ordered by creation date (newest first). Optional `limit` parameter (1-1000).
 
 #### Get Execution Details
 ```http
 GET /api/executions/:id
 ```
+
 Returns detailed execution information including status and results.
 
-## 🧪 Testing
+## Security Features
 
-Run tests:
-```bash
-npm test
-```
+- **Helmet.js** - Secure HTTP headers
+- **CORS** - Configurable cross-origin resource sharing
+- **Rate Limiting** - API abuse prevention (100 requests per 15 minutes)
+- **Input Validation** - Zod schema validation on all endpoints
+- **Error Handling** - Structured error responses with logging
+- **Request Timeouts** - 30-second timeout to prevent hanging requests
+- **Connection Pooling** - Efficient database connection management
+- **Graceful Shutdown** - Proper cleanup on process termination
 
-## 📊 Monitoring
+## Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `NODE_ENV` | Environment mode | `development` | No |
+| `PORT` | Server port | `5000` | No |
+| `DATABASE_URL` | PostgreSQL connection string | - | Yes |
+| `GOOGLE_API_KEY` | Google Gemini API key | - | Yes |
+| `ALLOWED_ORIGINS` | Comma-separated CORS origins | `http://localhost:3000,http://localhost:5000` | No |
+| `LOG_LEVEL` | Logging level | `info` | No |
+| `RATE_LIMIT_WINDOW_MS` | Rate limiting window (ms) | `900000` | No |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `100` | No |
+| `ENABLE_RESPONSE_CACHE` | Enable API response caching | `false` | No |
+| `CACHE_TTL_SECONDS` | Cache TTL (seconds) | `300` | No |
+| `EXECUTION_TIMEOUT_MS` | Agent execution timeout (ms) | `300000` | No |
+
+## Monitoring and Logging
 
 The application includes comprehensive logging with Winston:
 
-- Console logs in development
-- Structured JSON logs in production
-- Error tracking with stack traces
+- **Development**: Pretty-printed console logs with debug information
+- **Production**: Structured JSON logs for log aggregation systems
+- **Error Tracking**: Stack traces and error context for debugging
+- **Performance**: Execution time tracking and performance metrics
 
-## 🔧 Environment Variables
+## Available Scripts
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment (development, test, production) | development |
-| `PORT` | Server port | 5000 |
-| `DATABASE_URL` | PostgreSQL connection string | (required) |
-| `GOOGLE_API_KEY` | Google API key for Gemini | (required) |
-| `ALLOWED_ORIGINS` | Comma-separated CORS origins | http://localhost:3000,http://localhost:5000 |
-| `LOG_LEVEL` | Logging level | info |
-| `RATE_LIMIT_WINDOW_MS` | Rate limiting window in ms | 900000 |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 100 |
-| `ENABLE_RESPONSE_CACHE` | Enable API response caching | false |
-| `CACHE_TTL_SECONDS` | Cache TTL in seconds | 300 |
-| `EXECUTION_TIMEOUT_MS` | Agent execution timeout in ms | 300000 (5 min) |
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server with hot-reload |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run check` | Type-check TypeScript code |
+| `npm run db:push` | Push database schema to PostgreSQL |
+| `npm run validate` | Validate environment and dependencies |
+| `npm test` | Run validation tests |
 
-## 🤝 Contributing
+## License
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## 📝 License
+## Support
 
-MIT
+For issues, questions, or contributions, please open an issue on the [GitHub repository](https://github.com/rajshah9305/Crewsaisingle).

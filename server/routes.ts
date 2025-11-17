@@ -278,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: error instanceof Error ? error.message : String(error),
         });
       });
-);
+    })
   );
 
   // Get all executions
