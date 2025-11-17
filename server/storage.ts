@@ -220,9 +220,6 @@ export class DatabaseStorage implements IStorage {
       }
       
       // Pool is guaranteed to be non-null after getPool() succeeds
-      if (!pool) {
-        return false;
-      }
       
       const client = await pool.connect();
       try {
