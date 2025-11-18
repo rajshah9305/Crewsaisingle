@@ -17,7 +17,7 @@ export default function ExecutionDetailsPage() {
 
   const { data: execution, isLoading, error } = useQuery<Execution>({
     queryKey: [`/api/executions/${executionId}`],
-    queryFn: () => apiRequest("GET", `/api/executions/${executionId}`),
+    queryFn: () => apiRequest<Execution>("GET", `/api/executions/${executionId}`),
     enabled: !!executionId,
     refetchInterval: (query) => {
       // Poll if execution is still running
@@ -33,8 +33,8 @@ export default function ExecutionDetailsPage() {
       if (!execution?.agentId) {
         throw new Error("Agent ID not found");
       }
-      const newExecution = await apiRequest("POST", `/api/agents/${execution.agentId}/execute`);
-      return newExecution as Execution;
+      const newExecution = await apiRequest<Execution>("POST", `/api/agents/${execution.agentId}/execute`);
+      return newExecution;
     },
     onSuccess: (newExecution) => {
       queryClient.invalidateQueries({ queryKey: ["/api/executions"] });

@@ -22,11 +22,11 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
+export async function apiRequest<T = unknown>(
   method: string,
   url: string,
   data?: unknown | undefined,
-): Promise<unknown> {
+): Promise<T> {
   const res = await fetch(url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -41,14 +41,14 @@ export async function apiRequest(
     const jsonData = await res.json();
     // Ensure we return an array for array endpoints
     if (url.includes("/executions") && !url.match(/\/executions\/[^/]+$/)) {
-      return Array.isArray(jsonData) ? jsonData : [];
+      return (Array.isArray(jsonData) ? jsonData : []) as T;
     }
     if (url.includes("/agents") && !url.match(/\/agents\/[^/]+$/)) {
-      return Array.isArray(jsonData) ? jsonData : [];
+      return (Array.isArray(jsonData) ? jsonData : []) as T;
     }
-    return jsonData;
+    return jsonData as T;
   }
-  return res;
+  return res as T;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

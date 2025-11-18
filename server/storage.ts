@@ -220,6 +220,9 @@ export class DatabaseStorage implements IStorage {
       }
       
       // Pool is guaranteed to be non-null after getPool() succeeds
+      if (!pool) {
+        throw new Error('Failed to initialize database pool');
+      }
       
       const client = await pool.connect();
       try {

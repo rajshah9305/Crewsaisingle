@@ -23,14 +23,14 @@ export default function AgentsPage() {
     error,
   } = useQuery<Agent[], Error>({
     queryKey: ["/api/agents"],
-    queryFn: () => apiRequest("GET", "/api/agents"),
+    queryFn: () => apiRequest<Agent[]>("GET", "/api/agents"),
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   const reorderMutation = useMutation({
     mutationFn: async (newOrder: Agent[]) => {
-      return await apiRequest("PATCH", "/api/agents/reorder", { agents: newOrder });
+      return await apiRequest<void>("PATCH", "/api/agents/reorder", { agents: newOrder });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agents"] });
@@ -46,7 +46,7 @@ export default function AgentsPage() {
 
   const executeMutation = useMutation({
     mutationFn: async (agentId: string) => {
-      return await apiRequest("POST", `/api/agents/${agentId}/execute`);
+      return await apiRequest<{ id: string; status: string }>("POST", `/api/agents/${agentId}/execute`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/executions"] });

@@ -11,7 +11,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 export default function ExecutionsPage() {
   const { data: executionsData, isLoading, error } = useQuery<Execution[]>({
     queryKey: ["/api/executions"],
-    queryFn: () => apiRequest("GET", "/api/executions"),
+    queryFn: () => apiRequest<Execution[]>("GET", "/api/executions"),
     refetchInterval: (query) => {
       const data = query?.state?.data;
       const hasRunningExecutions = Array.isArray(data) && data.some(exec => exec.status === "running");

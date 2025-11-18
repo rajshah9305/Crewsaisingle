@@ -259,7 +259,7 @@ export default function Dashboard() {
     isLoading: agentsLoading,
   } = useQuery<Agent[]>({
     queryKey: ["/api/agents"],
-    queryFn: () => apiRequest("GET", "/api/agents"),
+    queryFn: () => apiRequest<Agent[]>("GET", "/api/agents"),
     retry: 3,
     retryDelay: (attemptIndex) =>
       Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -272,7 +272,7 @@ export default function Dashboard() {
     isLoading: executionsLoading,
   } = useQuery<Execution[]>({
     queryKey: ["/api/executions"],
-    queryFn: () => apiRequest("GET", "/api/executions"),
+    queryFn: () => apiRequest<Execution[]>("GET", "/api/executions"),
     refetchInterval: (query) => {
       const data = query?.state?.data;
       const hasRunningExecutions =
