@@ -4,6 +4,37 @@ Enterprise-grade AI agent orchestration platform powered by Google Gemini 2.5 Fl
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rajshah9305/Crewsaisingle)
 
+## 🚀 Quick Deploy to Vercel
+
+1. Click the "Deploy with Vercel" button above
+2. Set environment variables in Vercel dashboard:
+   - `GOOGLE_API_KEY` - Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - `DATABASE_URL` - PostgreSQL connection string (recommend [Neon](https://neon.tech))
+   - `NODE_ENV=production`
+3. Deploy the application
+4. **Important:** Initialize the database schema (see below)
+
+### Initialize Database After Deployment
+
+After deploying to Vercel, you need to create the database tables:
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Login and link project
+vercel login
+vercel link
+
+# Pull environment variables
+vercel env pull .env.local
+
+# Initialize database schema
+npm run db:push
+```
+
+**See [VERCEL_SETUP.md](VERCEL_SETUP.md) for detailed instructions and troubleshooting.**
+
 ## Features
 
 - **Agent Management** - Full CRUD operations for AI agents with drag-and-drop reordering
@@ -108,7 +139,7 @@ npm start
 
 ## Deployment
 
-### Vercel
+### Vercel (Recommended)
 
 1. Fork this repository to your GitHub account
 2. Import the project to [Vercel](https://vercel.com/new)
@@ -117,8 +148,34 @@ npm start
    - `DATABASE_URL` - PostgreSQL connection string
    - `NODE_ENV` - Set to `production`
 4. Deploy - Vercel will automatically build and deploy
+5. **Initialize database schema** - See [VERCEL_SETUP.md](VERCEL_SETUP.md)
 
 **Recommended**: Use [Neon](https://neon.tech) for managed PostgreSQL hosting with Vercel integration.
+
+## Common Issues
+
+### "Function Invocation Failed" When Creating Agents
+
+This error occurs when the database schema hasn't been initialized. Follow these steps:
+
+1. Install Vercel CLI: `npm install -g vercel`
+2. Link your project: `vercel link`
+3. Pull environment variables: `vercel env pull .env.local`
+4. Initialize database: `npm run db:push`
+
+See [VERCEL_SETUP.md](VERCEL_SETUP.md) for detailed troubleshooting.
+
+### Database Connection Errors
+
+- Verify your `DATABASE_URL` is correct
+- Ensure your database is running and accessible
+- For cloud databases, check if SSL is required (add `?sslmode=require`)
+
+### API Key Issues
+
+- Confirm your `GOOGLE_API_KEY` is valid
+- Check quota limits in Google AI Studio
+- Ensure the key is set in Vercel environment variables
 
 ## Project Structure
 
@@ -166,14 +223,10 @@ Returns system health status including database connectivity and API configurati
 GET /api/agents
 ```
 
-Returns array of all agents ordered by position.
-
 #### Get Agent by ID
 ```http
 GET /api/agents/:id
 ```
-
-Returns detailed information about a specific agent.
 
 #### Create Agent
 ```http
@@ -196,15 +249,6 @@ Content-Type: application/json
 #### Update Agent
 ```http
 PATCH /api/agents/:id
-Content-Type: application/json
-
-{
-  "name": "Updated Name",
-  "role": "Updated Role",
-  "goal": "Updated Goal",
-  "backstory": "Updated Backstory",
-  "tasks": ["Task 1", "Task 2"]
-}
 ```
 
 #### Delete Agent
@@ -215,14 +259,6 @@ DELETE /api/agents/:id
 #### Reorder Agents
 ```http
 PATCH /api/agents/reorder
-Content-Type: application/json
-
-{
-  "agents": [
-    { "id": "agent-1", "order": 0 },
-    { "id": "agent-2", "order": 1 }
-  ]
-}
 ```
 
 ### Execution Management
@@ -232,21 +268,15 @@ Content-Type: application/json
 POST /api/agents/:id/execute
 ```
 
-Starts asynchronous execution of agent tasks. Returns `202 Accepted` with execution ID.
-
 #### List Executions
 ```http
 GET /api/executions?limit=10
 ```
 
-Returns array of executions ordered by creation date (newest first). Optional `limit` parameter (1-1000).
-
 #### Get Execution Details
 ```http
 GET /api/executions/:id
 ```
-
-Returns detailed execution information including status and results.
 
 ## Security Features
 
@@ -275,15 +305,6 @@ Returns detailed execution information including status and results.
 | `CACHE_TTL_SECONDS` | Cache TTL (seconds) | `300` | No |
 | `EXECUTION_TIMEOUT_MS` | Agent execution timeout (ms) | `300000` | No |
 
-## Monitoring and Logging
-
-The application includes comprehensive logging with Winston:
-
-- **Development**: Pretty-printed console logs with debug information
-- **Production**: Structured JSON logs for log aggregation systems
-- **Error Tracking**: Stack traces and error context for debugging
-- **Performance**: Execution time tracking and performance metrics
-
 ## Available Scripts
 
 | Script | Description |
@@ -295,6 +316,10 @@ The application includes comprehensive logging with Winston:
 | `npm run db:push` | Push database schema to PostgreSQL |
 | `npm run validate` | Validate environment and dependencies |
 | `npm test` | Run validation tests |
+
+## Documentation
+
+- **[VERCEL_SETUP.md](VERCEL_SETUP.md)** - Detailed Vercel deployment and troubleshooting guide
 
 ## License
 
