@@ -1,6 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "dist/client",
   "rewrites": [
     {
